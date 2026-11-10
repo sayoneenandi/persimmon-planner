@@ -80,6 +80,7 @@ main { padding-block: 0 72px; }
 .panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; min-width: 0; position: relative; }
 .panel > header { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
 .grid-2 { display: grid; gap: 22px; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); }
+.stats { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .grid-3 { display: grid; gap: 22px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 880px) { .grid-2, .grid-3 { grid-template-columns: minmax(0, 1fr); } }
 .btn { border: 1px solid var(--ink); background: transparent; padding: 7px 14px; border-radius: 4px; font-size: .88rem; text-decoration: none; display: inline-block; }
@@ -88,7 +89,8 @@ main { padding-block: 0 72px; }
 .btn:hover { filter: brightness(1.07); }
 .chip { display: inline-flex; align-items: center; gap: 6px; font-size: .72rem; font-family: var(--mono); letter-spacing: .05em; padding: 2px 8px; border-radius: 99px; border: 1px solid currentColor; white-space: nowrap; }
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; background: var(--c, var(--ink)); }
-.t-ibm { --c: var(--ai); } .t-gai { --c: var(--yanagi); } .t-game { --c: var(--shu); } .t-read { --c: var(--kaki); } .t-review { --c: var(--gold); }
+.t-ibm, .t-unity { --c: var(--ai); }
+.t-unity { --c: var(--shu); } .t-gai { --c: var(--yanagi); } .t-game { --c: var(--shu); } .t-read { --c: var(--kaki); } .t-review { --c: var(--gold); }
 
 /* ---------- hero scene ---------- */
 .scene { position: relative; height: clamp(300px, 34vw, 400px); overflow: hidden; border-bottom: 4px solid var(--ink); }
@@ -388,7 +390,7 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
         </header>
         <div class="track" id="carTrack"></div>
       </section>
-      <div class="grid-3" id="todayStats"></div>
+      <div class="stats" id="todayStats"></div>
     </div>
   </section>
 
@@ -676,7 +678,9 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
     { id: 'ibm', title: 'IBM Management Consultant Professional Certificate', provider: 'IBM · Coursera', art: 'ibm',
       modules: ['Introduction to Management Consulting', 'Introduction to Business Analysis', 'Course 3 (confirm title)', 'Course 4 (confirm title)', 'Course 5 (confirm title)', 'Course 6 (confirm title)', 'Course 7 (confirm title)', 'Capstone: Integrated Management Consulting Project'] },
     { id: 'gai', title: 'Google UX Design Professional Certificate', provider: 'Google · Coursera', art: 'gai',
-      modules: ['Foundations of User Experience (UX) Design', 'Start the UX Design Process: Empathize, Define, and Ideate', 'Build Wireframes and Low-Fidelity Prototypes', 'Conduct UX Research and Test Early Concepts', 'Create High-Fidelity Designs and Prototypes in Figma', 'Course 6 (confirm title)', 'Course 7 (confirm title)'] }
+      modules: ['Foundations of User Experience (UX) Design', 'Start the UX Design Process: Empathize, Define, and Ideate', 'Build Wireframes and Low-Fidelity Prototypes', 'Conduct UX Research and Test Early Concepts', 'Create High-Fidelity Designs and Prototypes in Figma', 'Course 6 (confirm title)', 'Course 7 (confirm title)'] },
+    { id: 'unity', title: 'Unity from scratch: your game’s syllabus', provider: 'Unity Learn + your project', art: 'willow',
+      modules: ['Install Unity 6 LTS with Web Build Support; create a Universal 3D project', 'Unity Essentials pathway on Unity Learn (editor, scenes, GameObjects)', 'Walk around: add a first-person controller', 'Greybox the house: front door, living room, stairs, bedroom', 'Interactions: open doors, climb stairs, sit at the desk', 'Build for Web and play it on your site'] }
   ];
   const BOOKS = [
     { id: 'b1', title: 'The Pyramid Principle', by: 'Barbara Minto', why: 'Structure every slide and email', art: 'pyramid', track: 'ibm' },
@@ -690,12 +694,12 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
   const PLAN = [
     { day: 1, start: '19:00', end: '20:30', track: 'ibm', title: 'Consulting: new material', agenda: [['2 min', 'Stand-up: last time / this time / blockers.'], ['25 min', 'Pomodoro 1: next lesson, notes in two columns (idea | client example).'], ['25 min', 'Pomodoro 2: finish the lesson and the practice quiz.'], ['15 min', 'Write 3 bullets you’d say to a client. Add them to the learning log.']] },
     { day: 2, start: '19:00', end: '20:30', track: 'gai', title: 'UX Design: new material', agenda: [['2 min', 'Stand-up, then set the goal: finish one module.'], ['25 min', 'Pomodoro 1: lessons. Sketch along on paper.'], ['25 min', 'Pomodoro 2: the hands-on activity.'], ['15 min', 'Apply it to one room or screen of your game.']] },
-    { day: 3, start: '19:00', end: '20:15', track: 'game', title: 'Game: one story from the board', agenda: [['2 min', 'Stand-up. Move ONE story to In progress.'], ['50 min', 'Two pomodoros on that story only.'], ['10 min', 'Commit with “#issue” in the message and push. Update the card.']] },
+    { day: 3, start: '19:00', end: '20:15', track: 'game', title: 'Unity: one lesson', agenda: [['2 min', 'Stand-up. Open your house project.'], ['50 min', 'Two pomodoros: the next Unity lesson, doing every step yourself.'], ['10 min', 'Note what you learned in the log. Tick the syllabus step when it’s done.']] },
     { day: 3, start: '21:30', end: '21:50', track: 'read', title: 'Reading before bed', agenda: [['20 min', 'Read the current book. Mark one quote worth keeping.']] },
     { day: 4, start: '19:00', end: '20:30', track: 'ibm', title: 'Consulting: practise it', agenda: [['2 min', 'Stand-up.'], ['10 min', 'Pick a framework from Monday (issue tree, stakeholder map…).'], ['50 min', 'Apply it to your game as if it were a client. One page.'], ['15 min', 'Finish any graded assignment due this week.']] },
     { day: 5, start: '', end: '', track: 'rest', title: 'Rest day', agenda: [] },
     { day: 6, start: '10:00', end: '11:30', track: 'gai', title: 'Deep work: UX Design', agenda: [['75 min', 'Three pomodoros: finish the week’s module and any portfolio project step.'], ['15 min', 'Add one finding to the game’s UX case study.']] },
-    { day: 6, start: '14:00', end: '15:30', track: 'game', title: 'Deep work: game build', agenda: [['75 min', 'Three pomodoros on the biggest open story.'], ['15 min', 'Record a 20-second progress clip for the trailer.']] },
+    { day: 6, start: '14:00', end: '15:30', track: 'game', title: 'Deep work: game build', agenda: [['75 min', 'Three pomodoros: use this week’s lesson in your house project.'], ['15 min', 'Record a 20-second progress clip for the trailer.']] },
     { day: 0, start: '10:30', end: '11:30', track: 'read', title: 'Reading + notes', agenda: [['45 min', 'Read and take notes.'], ['15 min', 'Turn one idea into a learning-log entry.']] },
     { day: 0, start: '17:00', end: '17:45', track: 'review', title: 'Sprint ceremony', agenda: [['Mid-sprint', 'Backlog check: re-order the backlog and confirm next week’s stories.'], ['Last Sunday', 'Review: demo what’s Done and accept or reject each story.'], ['Last Sunday', 'Retro: one thing to keep, one to change.'], ['Last Sunday', 'Planning: pick the next sprint’s stories up to capacity.']] }
   ];
@@ -816,8 +820,8 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
   function renderCarousel() {
     const bs = store.get('books', {});
     $('#carTrack').innerHTML = COURSES.map(c => `
-      <article class="c-card t-${c.id}"><div class="art">${art(c.art)}<span class="chip kind">Certificate</span></div>
-        <div class="c-body"><h3>${esc(c.title)}</h3><span class="sub">${esc(c.provider)} · ${c.modules.length} courses</span>
+      <article class="c-card t-${c.id}"><div class="art">${art(c.art)}<span class="chip kind">${c.id === 'unity' ? 'Skill path' : 'Certificate'}</span></div>
+        <div class="c-body"><h3>${esc(c.title)}</h3><span class="sub">${esc(c.provider)} · ${c.modules.length} ${c.id === 'unity' ? 'steps' : 'courses'}</span>
           <div class="bar-o"><i style="width:${pct(c)}%"></i></div>
           <div class="c-foot"><span class="num">${doneCount(c)} / ${c.modules.length} done</span><a href="#learn" style="color:var(--ai)">Open</a></div></div></article>`).join('') +
       BOOKS.map(b => { const st = bs[b.id] || 0; return `
@@ -833,7 +837,7 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
 
   function renderStats() {
     const bs = store.get('books', {}), fin = BOOKS.filter(b => bs[b.id] === 2).length, reading = BOOKS.filter(b => bs[b.id] === 1).length;
-    const tiles = [...COURSES.map(c => ({ k: c.provider.split(' ·')[0] + ' certificate', v: pct(c) + '%', s: `${doneCount(c)} of ${c.modules.length} courses complete`, c: c.id, st: c.id === 'ibm' ? 'IBM' : 'UX' })),
+    const tiles = [...COURSES.map(c => ({ k: c.id === 'unity' ? 'Unity syllabus' : c.provider.split(' ·')[0] + ' certificate', v: pct(c) + '%', s: `${doneCount(c)} of ${c.modules.length} ${c.id === 'unity' ? 'steps' : 'courses'} complete`, c: c.id, st: { ibm: 'IBM', gai: 'UX', unity: 'U' }[c.id] })),
       { k: 'Reading list', v: `${fin} / ${BOOKS.length}`, s: `${reading} in progress`, c: 'read', st: '読' }];
     $('#todayStats').innerHTML = tiles.map(t => `<article class="panel stat t-${t.c}"><span class="stamp">${t.st}</span><span class="label"><span class="dot"></span> ${esc(t.k)}</span><div class="num big">${t.v}</div><p class="note">${esc(t.s)}</p></article>`).join('');
   }
@@ -903,10 +907,10 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
   const SPRINT = { n: 1, start: new Date(2026, 10, 9), end: new Date(2026, 10, 22), goal: 'A planner you enjoy opening every day, and a clear one-page concept for your game.' };
   const SPRINTS = [
     ['Sprint 1', '9–22 Nov', 'Woodblock layout, timer, courses, sprint tracker. Game concept.'],
-    ['Sprint 2', '23 Nov–6 Dec', 'Edit your plan in the app. Unity greybox of the house; game PRD.'],
-    ['Sprint 3', '7–20 Dec', 'Camera + photo-frame loop in the garden. Board reads Issues live.'],
-    ['Sprint 4', '21 Dec–3 Jan', 'Holiday sprint, lighter load. Upload trailer, résumé, case studies.'],
-    ['Sprint 5', '4–17 Jan', 'Playable slice (house + garden photo loop) on your site; 5 playtests.']
+    ['Sprint 2', '23 Nov–6 Dec', 'Unity basics: Unity Essentials pathway. Game PRD. Edit your plan in the app.'],
+    ['Sprint 3', '7–20 Dec', 'Walk around a greybox house in first person. Board reads Issues live.'],
+    ['Sprint 4', '21 Dec–3 Jan', 'Holiday sprint, lighter: doors, stairs, sit at the desk. Résumé upload.'],
+    ['Sprint 5', '4–17 Jan', 'First Web build on your site: walk through your house. Camera loop comes next.']
   ];
   const COLS = [['backlog', 'Backlog'], ['todo', 'Sprint · To do'], ['doing', 'In progress'], ['review', 'In review'], ['done', 'Done']];
   const DEFAULT_STORIES = [
@@ -928,12 +932,13 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
     { n: 16, t: 'Capture first trailer clip', area: 'game', owner: 'pm', pts: 3, col: 'backlog', ac: [] },
     { n: 17, t: 'Game page: play the Unity Web build inside the site', area: 'game', owner: 'dev', pts: 5, col: 'backlog', ac: ['Build lives in docs/game/', 'Plays from the Portfolio tab', 'Loads on phone and desktop'] },
     { n: 18, t: 'Game PRD + UX case study: problem, players, MVP, success metrics', area: 'game', owner: 'pm', pts: 3, col: 'backlog', ac: ['One page PRD', 'Uses the lean canvas', 'Doubles as a UX Design portfolio project'] },
+    { n: 23, t: 'Unity Essentials pathway on Unity Learn', area: 'game', owner: 'pm', pts: 5, col: 'backlog', ac: ['Pathway complete', 'Practice scene saved in your project'] },
     { n: 19, t: 'Unity greybox: front door → living room → stairs → bedroom (Levels A–B)', area: 'game', owner: 'pm', pts: 5, col: 'backlog', ac: ['Walk through all 3 rooms', 'Sitting at the desk triggers the computer'] },
     { n: 20, t: 'Camera loop: photograph pond life, hang photos on the living-room wall', area: 'game', owner: 'pm', pts: 5, col: 'backlog', ac: ['Take a photo in the garden', 'It appears as a frame in the house'] },
     { n: 21, t: '5 playtests of the slice; log what players do first', area: 'game', owner: 'pm', pts: 3, col: 'backlog', ac: ['5 testers', 'Findings in the learning log'] },
     { n: 22, t: 'Computer hub with one portal world (Level C)', area: 'game', owner: 'pm', pts: 5, col: 'backlog', ac: ['Desk computer opens the floating gallery', 'One portal works'] }
   ];
-  const stories = () => store.get('stories-v4', DEFAULT_STORIES);
+  const stories = () => store.get('stories-v5', DEFAULT_STORIES);
   const inSprint = s => s.col !== 'backlog';
   const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const repo = () => (store.get('repo', '') || 'sayoneenandi/persimmon-planner').trim();
@@ -987,7 +992,7 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
     $$('[data-d]').forEach(b => b.onclick = () => {
       const keys = COLS.map(c => c[0]);
       const next = stories().map(s => { if (s.n !== +b.dataset.n) return s; const col = keys[Math.max(0, Math.min(4, keys.indexOf(s.col) + +b.dataset.d))]; return { ...s, col, doneAt: col === 'done' ? iso(new Date()) : undefined }; });
-      store.set('stories-v4', next); const moved = next.find(s => s.n === +b.dataset.n);
+      store.set('stories-v5', next); const moved = next.find(s => s.n === +b.dataset.n);
       if (moved.col === 'done') toast(`#${moved.n} done. A lantern lights up.`);
       renderSprint();
     });
