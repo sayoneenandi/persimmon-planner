@@ -522,6 +522,7 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
     <article class="panel">
       <header><h3>GitHub activity</h3><span class="chip" style="color:var(--yanagi)">Sample rows · live in Sprint 3</span></header>
       <div class="gh">
+        <div class="ln"><span class="sha">live</span><span>Deployed to GitHub Pages: sayoneenandi.github.io/persimmon-planner</span></div>
         <div class="ln"><span class="sha">v2</span><span>Sprint 1: woodblock redesign, animated scenes, sprint tracker</span></div>
         <div class="ln"><span class="sha">v1</span><span>Sprint 1: basic layout, clock, pomodoro, week plan</span></div>
       </div>
@@ -926,10 +927,10 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
     { n: 6, t: 'Review the v2 redesign and accept or send back #1 and #5', area: 'planner', owner: 'pm', pts: 1, col: 'doing', ac: ['Written feedback in chat'] },
     { n: 7, t: 'Confirm course titles and which Google course you’re on', area: 'planner', owner: 'pm', pts: 1, col: 'todo', ac: ['All “confirm” titles replaced'] },
     { n: 8, t: 'Write the game pitch + core loop in the lean canvas', area: 'game', owner: 'pm', pts: 2, col: 'todo', ac: ['One-line pitch', 'Core loop in 3 steps', 'Target player'] },
-    { n: 9, t: 'Create a GitHub account/repo and share the name', area: 'planner', owner: 'pm', pts: 1, col: 'todo', ac: ['Repo exists', 'Name pasted into GitHub link'] },
+    { n: 9, t: 'Create a GitHub account/repo and share the name', area: 'planner', owner: 'pm', pts: 1, col: 'done', doneAt: '2026-11-10', ac: ['Repo exists', 'Name pasted into GitHub link'] },
     { n: 10, t: 'Choose game engine and platform', area: 'game', owner: 'pm', pts: 2, col: 'todo', ac: ['Compare 2 engines', 'Decision noted in the log'] },
     { n: 11, t: 'Edit sessions and books inside the app', area: 'planner', owner: 'dev', pts: 5, col: 'backlog', ac: [] },
-    { n: 12, t: 'Deploy to GitHub Pages', area: 'planner', owner: 'dev', pts: 3, col: 'backlog', ac: [] },
+    { n: 12, t: 'Deploy to GitHub Pages', area: 'planner', owner: 'dev', pts: 3, col: 'done', doneAt: '2026-11-10', ac: ['Live at sayoneenandi.github.io/persimmon-planner'] },
     { n: 13, t: 'Board reads Issues & milestones live', area: 'planner', owner: 'dev', pts: 5, col: 'backlog', ac: [] },
     { n: 14, t: 'Paper prototype + 3 playtests', area: 'game', owner: 'pm', pts: 5, col: 'backlog', ac: [] },
     { n: 15, t: 'Upload résumé PDF', area: 'portfolio', owner: 'dev', pts: 2, col: 'backlog', ac: [] },
@@ -938,7 +939,7 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
   const stories = () => store.get('stories-v2', DEFAULT_STORIES);
   const inSprint = s => s.col !== 'backlog';
   const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  const repo = () => (store.get('repo', '') || '').trim();
+  const repo = () => (store.get('repo', '') || 'sayoneenandi/persimmon-planner').trim();
 
   function renderSprint() {
     const ss = stories(), sp = ss.filter(inSprint);
