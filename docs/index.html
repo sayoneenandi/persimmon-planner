@@ -912,10 +912,10 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
   const SPRINT = { n: 1, start: new Date(2026, 10, 9), end: new Date(2026, 10, 22), goal: 'A planner you enjoy opening every day, and a clear one-page concept for your game.' };
   const SPRINTS = [
     ['Sprint 1', '9–22 Nov', 'Woodblock layout, timer, courses, sprint tracker. Game concept.'],
-    ['Sprint 2', '23 Nov–6 Dec', 'Edit your plan and books in the app. Paper prototype of the game.'],
+    ['Sprint 2', '23 Nov–6 Dec', 'Edit your plan and books in the app. Unity set-up, game PRD and paper prototype.'],
     ['Sprint 3', '7–20 Dec', 'GitHub repo + Pages hosting. Board reads Issues live.'],
     ['Sprint 4', '21 Dec–3 Jan', 'Holiday sprint, lighter load. Upload trailer, résumé, case studies.'],
-    ['Sprint 5', '4–17 Jan', 'First playable game build, released inside the app.']
+    ['Sprint 5', '4–17 Jan', 'First playable Unity Web build, playable on your site.']
   ];
   const COLS = [['backlog', 'Backlog'], ['todo', 'Sprint · To do'], ['doing', 'In progress'], ['review', 'In review'], ['done', 'Done']];
   const DEFAULT_STORIES = [
@@ -928,15 +928,17 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
     { n: 7, t: 'Confirm course titles and which Google course you’re on', area: 'planner', owner: 'pm', pts: 1, col: 'todo', ac: ['All “confirm” titles replaced'] },
     { n: 8, t: 'Write the game pitch + core loop in the lean canvas', area: 'game', owner: 'pm', pts: 2, col: 'todo', ac: ['One-line pitch', 'Core loop in 3 steps', 'Target player'] },
     { n: 9, t: 'Create a GitHub account/repo and share the name', area: 'planner', owner: 'pm', pts: 1, col: 'done', doneAt: '2026-11-10', ac: ['Repo exists', 'Name pasted into GitHub link'] },
-    { n: 10, t: 'Choose game engine and platform', area: 'game', owner: 'pm', pts: 2, col: 'todo', ac: ['Compare 2 engines', 'Decision noted in the log'] },
+    { n: 10, t: 'Install Unity and set up the Web build target', area: 'game', owner: 'pm', pts: 2, col: 'todo', ac: ['Unity Hub + Unity 6 LTS with Web Build Support module', 'An empty scene builds for Web without errors'] },
     { n: 11, t: 'Edit sessions and books inside the app', area: 'planner', owner: 'dev', pts: 5, col: 'backlog', ac: [] },
     { n: 12, t: 'Deploy to GitHub Pages', area: 'planner', owner: 'dev', pts: 3, col: 'done', doneAt: '2026-11-10', ac: ['Live at sayoneenandi.github.io/persimmon-planner'] },
     { n: 13, t: 'Board reads Issues & milestones live', area: 'planner', owner: 'dev', pts: 5, col: 'backlog', ac: [] },
     { n: 14, t: 'Paper prototype + 3 playtests', area: 'game', owner: 'pm', pts: 5, col: 'backlog', ac: [] },
     { n: 15, t: 'Upload résumé PDF', area: 'portfolio', owner: 'dev', pts: 2, col: 'backlog', ac: [] },
-    { n: 16, t: 'Capture first trailer clip', area: 'game', owner: 'pm', pts: 3, col: 'backlog', ac: [] }
+    { n: 16, t: 'Capture first trailer clip', area: 'game', owner: 'pm', pts: 3, col: 'backlog', ac: [] },
+    { n: 17, t: 'Game page: play the Unity Web build inside the site', area: 'game', owner: 'dev', pts: 5, col: 'backlog', ac: ['Build lives in docs/game/', 'Plays from the Portfolio tab', 'Loads on phone and desktop'] },
+    { n: 18, t: 'Game PRD for the PM course: problem, players, MVP, success metrics', area: 'game', owner: 'pm', pts: 3, col: 'backlog', ac: ['One page', 'Uses the lean canvas', 'Links to the Google AI course'] }
   ];
-  const stories = () => store.get('stories-v2', DEFAULT_STORIES);
+  const stories = () => store.get('stories-v3', DEFAULT_STORIES);
   const inSprint = s => s.col !== 'backlog';
   const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const repo = () => (store.get('repo', '') || 'sayoneenandi/persimmon-planner').trim();
@@ -990,7 +992,7 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
     $$('[data-d]').forEach(b => b.onclick = () => {
       const keys = COLS.map(c => c[0]);
       const next = stories().map(s => { if (s.n !== +b.dataset.n) return s; const col = keys[Math.max(0, Math.min(4, keys.indexOf(s.col) + +b.dataset.d))]; return { ...s, col, doneAt: col === 'done' ? iso(new Date()) : undefined }; });
-      store.set('stories-v2', next); const moved = next.find(s => s.n === +b.dataset.n);
+      store.set('stories-v3', next); const moved = next.find(s => s.n === +b.dataset.n);
       if (moved.col === 'done') toast(`#${moved.n} done. A lantern lights up.`);
       renderSprint();
     });
@@ -1015,7 +1017,7 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
     try { await navigator.clipboard.writeText(text); toast(msg); }
     catch { $('#cmds').closest('details').open = true; $('#cmds').textContent = text; const r = document.createRange(); r.selectNodeContents($('#cmds')); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); toast('Copy blocked here. The text is selected below.'); }
   }
-  $('#copyAll').onclick = () => copy(setupCmds(), 'Copied the setup commands for labels, milestones and all 16 issues');
+  $('#copyAll').onclick = () => copy(setupCmds(), 'Copied the setup commands for labels, milestones and all issues');
   $('#repoName').value = repo();
   $('#repoName').oninput = e => { store.set('repo', e.target.value); renderSprint(); };
 
