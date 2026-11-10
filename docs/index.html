@@ -1,0 +1,1076 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Persimmon Planner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a living woodblock print. Animated scene hero → panels printed on grained washi; tabs as a sticky indigo band with a wandering cat. */
+:root {
+  --paper: #F1E7D4; --paper-2: #E4D6BC; --card: #FAF4E6;
+  --ink: #1C2131; --ink-soft: #5A5C68; --line: rgba(28,33,49,.16);
+  --ai: #27467A; --ai-deep: #1A2C52;
+  --shu: #CF3B26; --kaki: #E2702A; --yanagi: #5F7F25; --sakura: #E7A3A0; --gold: #D9A441;
+  --on-color: #FAF4E6;
+  --display: "Shippori Mincho B1", "Hiragino Mincho ProN", Georgia, serif;
+  --body: "Zen Kaku Gothic New", "Hiragino Sans", system-ui, sans-serif;
+  --mono: "DM Mono", ui-monospace, Menlo, monospace;
+  --r: 6px;
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.3  0 0 0 0 0.22  0 0 0 0 0.12  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #111727; --paper-2: #1B2338; --card: #172036;
+  --ink: #EDE3CF; --ink-soft: #A9A698; --line: rgba(237,227,207,.14);
+  --ai: #89A4D8; --ai-deep: #18284A; --shu: #EF6B50; --kaki: #F39A56; --yanagi: #A5C35B; --sakura: #EDB2AE; --gold: #E5B95A;
+  --on-color: #F7F0E2; color-scheme: dark;
+}}
+:root[data-theme="dark"] {
+  --paper: #111727; --paper-2: #1B2338; --card: #172036;
+  --ink: #EDE3CF; --ink-soft: #A9A698; --line: rgba(237,227,207,.14);
+  --ai: #89A4D8; --ai-deep: #18284A; --shu: #EF6B50; --kaki: #F39A56; --yanagi: #A5C35B; --sakura: #EDB2AE; --gold: #E5B95A;
+  --on-color: #F7F0E2; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.55; }
+body::after { content: ""; position: fixed; inset: 0; background: var(--grain); opacity: .22; pointer-events: none; z-index: 30; mix-blend-mode: multiply; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--ai-deep); }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
+h2 { font-size: 1.6rem; line-height: 1.2; }
+h3 { font-size: 1.12rem; }
+p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--kaki); outline-offset: 2px; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.label { font-family: var(--mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+.num { font-variant-numeric: tabular-nums; font-family: var(--mono); }
+.note { font-size: .88rem; color: var(--ink-soft); }
+
+/* seigaiha wave band, used as a divider */
+.waves { height: 18px; background:
+  radial-gradient(circle at 50% 100%, transparent 5px, var(--ai) 5.5px 7px, transparent 7.5px 10px, var(--ai) 10.5px 12px, transparent 12.5px) 0 0/24px 12px repeat-x,
+  radial-gradient(circle at 50% 100%, transparent 5px, var(--ai) 5.5px 7px, transparent 7.5px 10px, var(--ai) 10.5px 12px, transparent 12.5px) 12px 6px/24px 12px repeat-x;
+  opacity: .5; }
+
+/* ---------- top bar ---------- */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--ai-deep); color: #F4ECDD; border-bottom: 3px solid var(--shu); overflow: hidden; }
+.top .wrap { display: flex; align-items: center; gap: 14px; padding-block: 10px 0; flex-wrap: wrap; position: relative; }
+.brand { display: flex; align-items: center; gap: 10px; margin-right: auto; }
+.hanko { width: 36px; height: 36px; border-radius: 5px; background: var(--shu); color: #FFF4E6; display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 1.1rem; box-shadow: inset 0 0 0 2px rgba(255,244,230,.4); transform: rotate(-5deg); }
+.brand h1 { font-size: 1.2rem; color: #F4ECDD; }
+.brand small { display: block; font-family: var(--mono); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: #C9C2B2; }
+.clock { text-align: right; line-height: 1.2; }
+.clock .t { font-family: var(--mono); font-size: 1.25rem; color: #F4ECDD; }
+.clock .d { font-size: .74rem; color: #C9C2B2; font-family: var(--mono); }
+nav.tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; width: 100%; padding-top: 6px; }
+nav.tabs a { color: #D9D2C3; text-decoration: none; padding: 7px 14px; border-radius: 5px 5px 0 0; font-size: .9rem; white-space: nowrap; }
+nav.tabs a[aria-current="page"] { background: var(--paper); color: var(--ink); font-weight: 700; }
+nav.tabs a:hover:not([aria-current]) { color: #fff; background: rgba(255,255,255,.08); }
+.walker { position: absolute; bottom: 0; left: 0; width: 46px; height: 26px; animation: walk 38s linear infinite; pointer-events: none; }
+.walker .leg { animation: step .5s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: top center; }
+.walker .leg.b { animation-delay: .25s; }
+.walker .wt { animation: tailw 1.2s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 0% 100%; }
+@keyframes walk { 0% { transform: translateX(-60px); } 60%, 100% { transform: translateX(calc(100vw + 60px)); } }
+@keyframes step { to { transform: rotate(18deg); } }
+@keyframes tailw { to { transform: rotate(-20deg); } }
+
+main { padding-block: 0 72px; }
+.view { display: grid; gap: 22px; padding-top: 22px; }
+.view-head { display: flex; align-items: end; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.view-head p { color: var(--ink-soft); max-width: 64ch; margin-top: 4px; }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; min-width: 0; position: relative; }
+.panel > header { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.grid-2 { display: grid; gap: 22px; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); }
+.grid-3 { display: grid; gap: 22px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 880px) { .grid-2, .grid-3 { grid-template-columns: minmax(0, 1fr); } }
+.btn { border: 1px solid var(--ink); background: transparent; padding: 7px 14px; border-radius: 4px; font-size: .88rem; text-decoration: none; display: inline-block; }
+.btn.primary { background: var(--shu); border-color: var(--shu); color: #FFF6EA; font-weight: 700; }
+.btn.sm { padding: 3px 9px; font-size: .78rem; }
+.btn:hover { filter: brightness(1.07); }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: .72rem; font-family: var(--mono); letter-spacing: .05em; padding: 2px 8px; border-radius: 99px; border: 1px solid currentColor; white-space: nowrap; }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; background: var(--c, var(--ink)); }
+.t-ibm { --c: var(--ai); } .t-gai { --c: var(--yanagi); } .t-game { --c: var(--shu); } .t-read { --c: var(--kaki); } .t-review { --c: var(--gold); }
+
+/* ---------- hero scene ---------- */
+.scene { position: relative; height: clamp(300px, 34vw, 400px); overflow: hidden; border-bottom: 4px solid var(--ink); }
+.scene svg.world { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.scene[data-tod="dawn"]  { --sky1: #F4C9A2; --sky2: #F6E6CC; --sun: #E2702A; --sun2: #F4C9A2; --mtn: #6F86B4; --mtn2: #4B6496; --cloud: #FBEBD5; --water: #4E78AE; --foam: #CFE0EE; }
+.scene[data-tod="day"]   { --sky1: #E9DDC2; --sky2: #F3EBDA; --sun: #CF3B26; --sun2: #E9DDC2; --mtn: #7D93BC; --mtn2: #27467A; --cloud: #FFF8EA; --water: #3F6AA3; --foam: #D7E5F0; }
+.scene[data-tod="dusk"]  { --sky1: #E2702A; --sky2: #2A3F6E; --sun: #F4B860; --sun2: #E2702A; --mtn: #3A4E7E; --mtn2: #1E2D52; --cloud: #E9A27A; --water: #233A68; --foam: #7E9AC8; }
+.scene[data-tod="night"] { --sky1: #0F1830; --sky2: #26385F; --sun: #F1E6C8; --sun2: #26385F; --mtn: #24355C; --mtn2: #16223F; --cloud: #33466F; --water: #18284A; --foam: #4C6596; }
+.scene .rain, .scene .flies { display: none; } .scene .petals { display: none; }
+.scene[data-tod="night"] .rain, .scene[data-tod="dusk"] .flies, .scene[data-tod="night"] .flies { display: inline; }
+.scene[data-tod="day"] .petals, .scene[data-tod="dawn"] .petals { display: inline; }
+.scene .glow { opacity: 0; }
+.scene[data-tod="night"] .glow, .scene[data-tod="dusk"] .glow { opacity: 1; animation: flick 3s ease-in-out infinite alternate; }
+.overlay { position: absolute; inset: 0; display: flex; align-items: flex-start; pointer-events: none; }
+.overlay .wrap { width: 100%; padding-block: 22px; }
+.scroll { pointer-events: auto; display: inline-grid; gap: 4px; background: var(--card); color: var(--ink); padding: 14px 18px 16px; border: 1px solid var(--line); border-top: 6px solid var(--shu); border-radius: 2px; box-shadow: 6px 6px 0 rgba(28,33,49,.25); max-width: 360px; }
+.scroll h2 { font-size: clamp(1.4rem, 3vw, 2rem); }
+.scroll .big { font-family: var(--mono); font-size: 1.05rem; }
+@media (max-width: 560px) { .scroll { max-width: 240px; padding: 10px 12px; } .scroll .note { display: none; } }
+
+.sway { animation: sway 5s ease-in-out infinite alternate; transform-box: view-box; transform-origin: 0 0; }
+.swing { animation: swing 3.4s ease-in-out infinite alternate; transform-box: view-box; transform-origin: 0 0; }
+.drift { animation: drift 60s linear infinite alternate; }
+.koi { animation: swim 26s linear infinite; }
+.koi.r { animation-duration: 34s; animation-direction: reverse; }
+.koi .tail { animation: tail .6s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 0% 50%; }
+.frog { animation: hop 9s ease-in-out infinite; }
+.blink { animation: blink 5s infinite; transform-box: fill-box; transform-origin: center; }
+.ctail { animation: ctail 3s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 0% 100%; }
+.ripple { animation: ripple 4s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.drop { animation: fall 1.1s linear infinite; }
+.petal { animation: petal 12s linear infinite; }
+.fly { animation: fly 4s ease-in-out infinite alternate; }
+.sun-r { animation: spin 90s linear infinite; transform-box: fill-box; transform-origin: center; }
+.steam { animation: steam 3s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.slowspin { animation: spin 40s linear infinite; transform-box: fill-box; transform-origin: center; }
+.pulse { animation: pulse 6s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+.flicker { animation: flick 2.4s steps(2) infinite; }
+@keyframes sway { from { transform: rotate(-1.5deg); } to { transform: rotate(2deg); } }
+@keyframes swing { from { transform: rotate(-6deg); } to { transform: rotate(6deg); } }
+@keyframes drift { to { transform: translateX(160px); } }
+@keyframes swim { from { transform: translateX(-160px); } to { transform: translateX(1360px); } }
+@keyframes tail { to { transform: rotate(22deg); } }
+@keyframes hop { 0%, 18% { transform: translate(0, 0); } 24% { transform: translate(55px, -46px); } 30%, 50% { transform: translate(110px, 0); } 56% { transform: translate(165px, -46px); } 62%, 80% { transform: translate(220px, 0); } 88% { transform: translate(110px, -70px); } 96%, 100% { transform: translate(0, 0); } }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+@keyframes ctail { to { transform: rotate(14deg); } }
+@keyframes ripple { from { transform: scale(.3); opacity: .9; } to { transform: scale(2.2); opacity: 0; } }
+@keyframes fall { from { transform: translateY(-40px); } to { transform: translateY(420px); } }
+@keyframes petal { from { transform: translate(0, -30px) rotate(0); } to { transform: translate(-260px, 420px) rotate(540deg); } }
+@keyframes fly { to { transform: translate(14px, -10px); opacity: .3; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes steam { from { transform: translateY(0) scale(.6); opacity: .9; } to { transform: translateY(-40px) scale(1.4); opacity: 0; } }
+@keyframes pulse { to { transform: scale(.9); } }
+@keyframes flick { 0% { opacity: .55; } 100% { opacity: 1; } }
+
+/* ---------- session card ---------- */
+.session { background: var(--ai-deep); color: var(--on-color); border: none; overflow: hidden; }
+.session::after { content: ""; position: absolute; right: -70px; top: -70px; width: 230px; height: 230px; border-radius: 50%; background: repeating-radial-gradient(circle, var(--shu) 0 7px, transparent 7px 14px); opacity: .5; pointer-events: none; }
+.session .label { color: #C9C2B2; }
+.session h2 { margin-top: 4px; max-width: 22ch; position: relative; z-index: 1; }
+.session .when { font-family: var(--mono); margin-top: 6px; color: #F2D6AE; position: relative; z-index: 1; }
+.agenda { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 8px; position: relative; z-index: 1; }
+.agenda li { display: grid; grid-template-columns: 64px 1fr; gap: 10px; padding: 8px 10px; background: rgba(255,255,255,.08); border-radius: 4px; }
+.agenda .m { font-family: var(--mono); font-size: .8rem; color: var(--kaki); padding-top: 2px; }
+.session .actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; position: relative; z-index: 1; }
+.session .btn { border-color: #E9D9BF; color: #F4ECDD; }
+.session .btn.primary { border-color: var(--shu); }
+.later { margin-top: 14px; font-size: .86rem; color: #C9C2B2; position: relative; z-index: 1; }
+
+/* ---------- pomodoro ---------- */
+.pomo { display: grid; justify-items: center; gap: 10px; text-align: center; }
+.modes { display: inline-flex; border: 1px solid var(--line); border-radius: 99px; padding: 3px; gap: 2px; }
+.modes button { border: 0; background: transparent; padding: 4px 12px; border-radius: 99px; font-size: .8rem; }
+.modes button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.pomo-time { font-size: 3rem; line-height: 1; }
+.river { width: 100%; max-width: 420px; aspect-ratio: 400 / 110; border-radius: 4px; overflow: hidden; background: var(--ai-deep); }
+.river svg { width: 100%; height: 100%; display: block; }
+.tiger-move { transition: transform .4s linear; }
+.tiger-bob { animation: bob 1.2s ease-in-out infinite alternate; }
+.paddle { animation: step .35s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: top center; }
+.paused .tiger-bob, .paused .paddle { animation-play-state: paused; }
+.river .sleeper, .river.brk .tiger-move { display: none; }
+.river.brk .sleeper { display: inline; }
+.zz { animation: steam 2.5s ease-out infinite; transform-box: fill-box; }
+@keyframes bob { to { transform: translateY(3px); } }
+.tomatoes { display: flex; gap: 6px; justify-content: center; min-height: 16px; }
+.tomatoes span { width: 16px; height: 16px; border-radius: 50%; background: var(--kaki); box-shadow: inset -2px -2px 0 rgba(0,0,0,.18); position: relative; }
+.tomatoes span::after { content: ""; position: absolute; top: -3px; left: 5px; width: 6px; height: 4px; background: var(--yanagi); border-radius: 50% 50% 0 0; }
+.tomatoes span.empty { background: transparent; border: 1.5px dashed var(--line); box-shadow: none; }
+.tomatoes span.empty::after { display: none; }
+
+/* ---------- carousel ---------- */
+.track { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(230px, 250px); gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 4px 14px; scrollbar-width: thin; }
+.c-card { scroll-snap-align: start; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; display: grid; grid-template-rows: 170px auto; transition: transform .25s, box-shadow .25s; }
+.c-card:hover { transform: translateY(-4px) rotate(-.4deg); box-shadow: 6px 6px 0 var(--line); }
+.art { position: relative; overflow: hidden; }
+.art svg { width: 100%; height: 100%; display: block; }
+.art .kind { position: absolute; top: 10px; left: 10px; color: #FAF4E6; border-color: rgba(255,255,255,.6); background: rgba(0,0,0,.28); }
+.c-body { padding: 12px 14px 14px; display: grid; gap: 8px; align-content: start; }
+.c-body h3 { font-size: 1.02rem; line-height: 1.25; }
+.c-body .sub { color: var(--ink-soft); font-size: .84rem; }
+.bar-o { height: 6px; background: var(--paper-2); border-radius: 99px; overflow: hidden; }
+.bar-o i { display: block; height: 100%; background: var(--c, var(--kaki)); border-radius: 99px; transition: width .4s; }
+.c-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: .8rem; }
+.status-btn { border: 1px solid var(--line); background: transparent; border-radius: 99px; padding: 2px 10px; font-size: .76rem; font-family: var(--mono); }
+.car-nav { display: flex; gap: 6px; }
+.car-nav button { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--ink); background: var(--card); font-size: 1rem; }
+.stat { overflow: hidden; }
+.stat .big { font-size: 2.2rem; margin-top: 4px; line-height: 1.1; }
+.stat .stamp { position: absolute; right: 14px; top: 14px; width: 54px; height: 54px; border: 2px solid var(--c); color: var(--c); border-radius: 50%; display: grid; place-items: center; font-family: var(--display); font-weight: 800; transform: rotate(12deg); opacity: .85; font-size: .78rem; text-align: center; line-height: 1.05; }
+
+/* ---------- week ---------- */
+.week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 980px) { .week { grid-template-columns: minmax(0, 1fr); } }
+.day { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 0 0 12px; display: grid; gap: 8px; align-content: start; min-width: 0; overflow: hidden; }
+.day > * { margin-inline: 12px; }
+.day .band { margin: 0; height: 30px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; color: var(--on-color); font-family: var(--display); font-weight: 800; background: var(--ai); }
+.day.weekend .band { background: var(--yanagi); } .day.fri .band { background: var(--ink-soft); }
+.day.today { border-color: var(--shu); box-shadow: 0 0 0 2px var(--shu); }
+.day.today .band { background: var(--shu); }
+.day .work { font-size: .74rem; color: var(--ink-soft); font-family: var(--mono); }
+.slot { border: 0; border-left: 4px solid var(--c); background: var(--paper); padding: 8px 10px; border-radius: 0 4px 4px 0; display: grid; gap: 2px; text-align: left; width: auto; transition: transform .2s; }
+.slot:hover { transform: translateX(3px); }
+.slot .tm { font-family: var(--mono); font-size: .74rem; color: var(--ink-soft); }
+.slot .nm { font-size: .86rem; font-weight: 500; line-height: 1.3; }
+.slot.rest { --c: var(--line); color: var(--ink-soft); font-size: .84rem; }
+.totals { display: flex; gap: 18px; flex-wrap: wrap; }
+.totals div { display: grid; }
+.totals .num { font-size: 1.4rem; }
+
+/* ---------- learn ---------- */
+.pond { width: 100%; height: auto; display: block; margin-top: 8px; background: var(--ai-deep); border-radius: 4px; }
+.frogpos { transition: transform .7s cubic-bezier(.3,1.4,.5,1); }
+.frogpos.jump .frogbody { animation: jump .7s ease-out; }
+@keyframes jump { 40% { transform: translateY(-26px); } }
+.mods { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 2px; }
+.mods li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; padding: 6px 4px; border-bottom: 1px dashed var(--line); }
+.mods input { width: 16px; height: 16px; margin-top: 3px; accent-color: var(--shu); }
+.mods .tbc { color: var(--ink-soft); font-style: italic; }
+.mods li.done span { text-decoration: line-through; text-decoration-color: var(--shu); color: var(--ink-soft); }
+.log-form { display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr) auto; }
+select, textarea, input[type="text"] { font: inherit; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 8px; min-width: 0; }
+.log-form textarea { grid-column: 1 / -1; min-height: 70px; resize: vertical; }
+.log { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; }
+.log li { display: grid; gap: 2px; padding: 8px 10px; background: var(--paper); border-radius: 4px; border-left: 3px solid var(--c); }
+.log .meta { font-family: var(--mono); font-size: .72rem; color: var(--ink-soft); }
+
+/* ---------- sprint tracker ---------- */
+.sprint-hero { background: var(--ink); color: var(--paper); border: 0; overflow: hidden; }
+.sprint-hero .label { color: color-mix(in srgb, var(--paper) 65%, transparent); }
+.sprint-hero h2 { color: var(--paper); }
+.sprint-hero .kpis { display: flex; gap: 26px; flex-wrap: wrap; margin-top: 14px; }
+.sprint-hero .kpis div { display: grid; }
+.sprint-hero .kpis .num { font-size: 1.6rem; }
+.lanterns { width: 100%; height: 96px; display: block; margin-top: 10px; }
+.lan .body { transition: fill .5s; }
+.lan.lit .body { fill: var(--shu); }
+.lan .body { fill: color-mix(in srgb, var(--paper) 18%, transparent); }
+.lan.lit .lglow { opacity: .8; }
+.lan .lglow { opacity: 0; transition: opacity .6s; }
+.how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 880px) { .how { grid-template-columns: minmax(0, 1fr); } }
+.how div { display: grid; gap: 4px; align-content: start; padding: 12px; background: var(--paper); border-radius: 4px; border-top: 3px solid var(--c, var(--ai)); }
+.how b { font-family: var(--display); font-size: 1rem; }
+.how p { font-size: .87rem; color: var(--ink-soft); }
+.map { width: 100%; border-collapse: collapse; font-size: .87rem; }
+.map th, .map td { text-align: left; padding: 7px 8px; border-bottom: 1px dashed var(--line); vertical-align: top; }
+.map th { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); font-weight: 500; }
+.map code, .story code { font-family: var(--mono); font-size: .8rem; background: var(--paper-2); padding: 1px 5px; border-radius: 3px; }
+.tablewrap { overflow-x: auto; }
+.gh-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+.gh-row input { flex: 1 1 220px; }
+.status { display: inline-flex; align-items: center; gap: 6px; font-size: .82rem; }
+.cmds { font-family: var(--mono); font-size: .76rem; white-space: pre; overflow-x: auto; background: var(--ink); color: var(--paper); padding: 12px; border-radius: 4px; margin-top: 8px; max-height: 260px; }
+.board { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 1000px) { .board { grid-template-columns: minmax(0, 1fr); } }
+.col { background: var(--paper-2); border-radius: var(--r); padding: 10px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.col h3 { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; display: flex; justify-content: space-between; gap: 6px; }
+.story { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--c); border-radius: 4px; padding: 9px 10px; display: grid; gap: 6px; }
+.story.a-planner { --c: var(--ai); } .story.a-game { --c: var(--shu); } .story.a-portfolio { --c: var(--kaki); }
+.story .top-row { display: flex; justify-content: space-between; gap: 6px; font-family: var(--mono); font-size: .72rem; color: var(--ink-soft); }
+.story p { font-size: .87rem; line-height: 1.35; }
+.story details { font-size: .8rem; color: var(--ink-soft); }
+.story summary { cursor: pointer; }
+.story ul { margin: 4px 0 0; padding-left: 18px; }
+.story .row { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; }
+.owner { font-family: var(--mono); font-size: .7rem; padding: 1px 6px; border-radius: 3px; background: var(--paper-2); }
+.owner.pm { background: color-mix(in srgb, var(--shu) 18%, transparent); }
+.move { border: 1px solid var(--line); background: var(--paper); border-radius: 3px; font-size: .78rem; padding: 0 7px; }
+.chart-wrap { overflow-x: auto; }
+.burn { width: 100%; min-width: 520px; height: auto; display: block; }
+.burn text { font-family: var(--mono); font-size: 11px; fill: var(--ink-soft); }
+.legend { display: flex; gap: 16px; font-size: .82rem; flex-wrap: wrap; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 18px; height: 0; border-top: 2px solid var(--shu); display: inline-block; }
+.legend i.ideal { border-top: 2px dashed var(--ink-soft); }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--paper); font-size: .78rem; padding: 6px 8px; border-radius: 4px; font-family: var(--mono); white-space: nowrap; }
+.roadmap { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 880px) { .roadmap { grid-template-columns: minmax(0, 1fr); } }
+.roadmap li { border-top: 4px solid var(--line); padding-top: 10px; display: grid; gap: 4px; }
+.roadmap li.now { border-top-color: var(--shu); }
+.roadmap .num { font-size: .74rem; color: var(--ink-soft); }
+.roadmap p { font-size: .86rem; color: var(--ink-soft); }
+.canvas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 880px) { .canvas { grid-template-columns: minmax(0, 1fr); } }
+.canvas label { display: grid; gap: 4px; }
+.canvas textarea { font-size: .88rem; min-height: 84px; resize: vertical; }
+
+/* ---------- portfolio ---------- */
+.video { aspect-ratio: 16 / 9; max-width: 100%; border-radius: var(--r); position: relative; overflow: hidden; }
+.video svg { width: 100%; height: 100%; display: block; }
+.video .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 76px; height: 76px; border-radius: 50%; background: var(--shu); display: grid; place-items: center; box-shadow: 0 0 0 10px rgba(255,255,255,.14); }
+.video .play::before { content: ""; border-left: 22px solid #FFF4E6; border-top: 13px solid transparent; border-bottom: 13px solid transparent; margin-left: 6px; }
+.video .cap { position: absolute; left: 14px; bottom: 12px; right: 14px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: .82rem; color: #FAF4E6; }
+.kakejiku { background: var(--paper); border: 1px solid var(--line); padding: 18px 16px; display: grid; gap: 7px; position: relative; border-top: 10px solid var(--ai-deep); border-bottom: 10px solid var(--ai-deep); }
+.kakejiku .ln { height: 7px; background: var(--paper-2); border-radius: 2px; }
+.kakejiku .seal { position: absolute; right: 14px; bottom: 14px; width: 40px; height: 40px; background: var(--shu); color: #FFF4E6; display: grid; place-items: center; font-family: var(--display); font-weight: 800; transform: rotate(-6deg); border-radius: 3px; }
+.work-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 760px) { .work-grid { grid-template-columns: minmax(0, 1fr); } }
+.work { border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; display: grid; grid-template-rows: 130px auto; background: var(--paper); }
+.work .art { height: 130px; }
+.work .wb { padding: 12px; display: grid; gap: 4px; }
+.gh { font-family: var(--mono); font-size: .82rem; display: grid; }
+.gh .ln { display: grid; grid-template-columns: 80px 1fr; gap: 8px; padding: 7px 0; border-bottom: 1px dashed var(--line); }
+.gh .sha { color: var(--kaki); }
+
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 10px 16px; border-radius: 4px; font-size: .88rem; z-index: 40; max-width: calc(100% - 32px); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <div class="hanko" aria-hidden="true">柿</div>
+      <div><h1>Persimmon Planner</h1><small>Study · Build · Portfolio</small></div>
+    </div>
+    <div class="clock"><div class="t num" id="clockTime">--:--:--</div><div class="d" id="clockDate">—</div></div>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#today" data-view="today">Today</a>
+      <a href="#plan" data-view="plan">Week plan</a>
+      <a href="#learn" data-view="learn">Courses</a>
+      <a href="#build" data-view="build">Sprint tracker</a>
+      <a href="#portfolio" data-view="portfolio">Portfolio</a>
+    </nav>
+    <svg class="walker" viewBox="0 0 46 26" aria-hidden="true">
+      <path class="wt" d="M8 12 C 2 10, 2 3, 6 1" stroke="#0E0E12" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="20" cy="13" rx="13" ry="6" fill="#0E0E12"/>
+      <circle cx="34" cy="9" r="6" fill="#0E0E12"/>
+      <path d="M30 5 L31 0 L34 4 Z M35 4 L38 0 L39 6 Z" fill="#0E0E12"/>
+      <circle cx="36" cy="8.5" r="1.1" fill="#E8B04A"/>
+      <rect class="leg" x="11" y="17" width="2.6" height="8" rx="1" fill="#0E0E12"/>
+      <rect class="leg b" x="15" y="17" width="2.6" height="8" rx="1" fill="#0E0E12"/>
+      <rect class="leg b" x="25" y="17" width="2.6" height="8" rx="1" fill="#0E0E12"/>
+      <rect class="leg" x="29" y="17" width="2.6" height="8" rx="1" fill="#0E0E12"/>
+    </svg>
+  </div>
+</header>
+
+<main>
+  <!-- TODAY -->
+  <section id="view-today">
+    <div class="scene" id="scene" data-tod="night">
+      <svg class="world" id="world" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+      <div class="overlay"><div class="wrap">
+        <div class="scroll">
+          <span class="label" id="greetTag">Tuesday · Week 46</span>
+          <h2 id="greet">Good evening</h2>
+          <span class="big" id="greetNext">—</span>
+          <span class="note" id="greetSub">The pond follows the real time of day.</span>
+        </div>
+      </div></div>
+    </div>
+    <div class="wrap view">
+      <div class="grid-2">
+        <article class="panel session" id="todaySession"></article>
+        <article class="panel">
+          <header><h3>Pomodoro river</h3><span class="label" id="pomoToday">0 today</span></header>
+          <div class="pomo">
+            <div class="modes" role="group" aria-label="Timer mode">
+              <button id="m-focus" data-mode="focus" aria-pressed="true">Focus 25</button>
+              <button id="m-short" data-mode="short" aria-pressed="false">Break 5</button>
+              <button id="m-long" data-mode="long" aria-pressed="false">Long 15</button>
+            </div>
+            <div class="num pomo-time" id="pomoTime">25:00</div>
+            <div class="river paused" id="river"></div>
+            <div class="tomatoes" id="tomatoes" aria-label="Pomodoros this cycle"></div>
+            <div style="display:flex;gap:8px"><button class="btn primary" id="pomoStart">Start</button><button class="btn" id="pomoReset">Reset</button></div>
+            <p class="note">The tiger swims across while you focus. On a break, the cat sleeps. After 4 blocks you get a 15-minute break.</p>
+          </div>
+        </article>
+      </div>
+      <div class="waves" aria-hidden="true"></div>
+      <section class="panel" style="background:transparent;border:0;padding:0">
+        <header>
+          <div><h2>On the shelf</h2><p class="note">Your two certificates and the reading list. Tap a book’s status to move it along.</p></div>
+          <div class="car-nav"><button id="carPrev" aria-label="Scroll left">←</button><button id="carNext" aria-label="Scroll right">→</button></div>
+        </header>
+        <div class="track" id="carTrack"></div>
+      </section>
+      <div class="grid-3" id="todayStats"></div>
+    </div>
+  </section>
+
+  <!-- PLAN -->
+  <section class="wrap view" id="view-plan" hidden>
+    <div class="view-head">
+      <div>
+        <span class="label">Professor’s timetable</span>
+        <h2>Your study week around a 40-hour job</h2>
+        <p>Weekday sessions are short and fixed so they fit after work. Saturday holds the deep work. Friday is a planned rest day. Each session starts with a 2-minute stand-up: what did I do last time, what will I do now, and is anything blocking me?</p>
+      </div>
+      <div class="totals" id="weekTotals"></div>
+    </div>
+    <div class="week" id="week"></div>
+    <article class="panel" id="slotDetail"></article>
+  </section>
+
+  <!-- LEARN -->
+  <section class="wrap view" id="view-learn" hidden>
+    <div class="view-head">
+      <div>
+        <span class="label">Coursera certificates</span>
+        <h2>Course progress</h2>
+        <p>Every course you tick off moves the frog one lily pad forward. Titles marked “confirm” are placeholders: click one and type the real title from Coursera.</p>
+      </div>
+    </div>
+    <div class="grid-2" id="courseCols"></div>
+    <article class="panel">
+      <header><h3>Learning log</h3><span class="label">One idea per session</span></header>
+      <form class="log-form" id="logForm">
+        <select id="logTrack" aria-label="Track"><option value="ibm">IBM Management Consultant</option><option value="gai">Google AI</option><option value="game">Game product</option><option value="read">Reading</option></select>
+        <button class="btn primary" type="submit">Add entry</button>
+        <textarea id="logText" placeholder="One idea you could explain to a client or a teammate tomorrow…" aria-label="Log entry"></textarea>
+      </form>
+      <ul class="log" id="log"></ul>
+    </article>
+  </section>
+
+  <!-- BUILD -->
+  <section class="wrap view" id="view-build" hidden>
+    <article class="panel sprint-hero" id="sprintHero"></article>
+
+    <article class="panel">
+      <header><h3>How this sprint is planned</h3><span class="label">Scrum, sized for a 40-hour work week</span></header>
+      <div class="how" id="how"></div>
+    </article>
+
+    <article class="panel">
+      <header><h3>GitHub link</h3><span class="status" id="ghStatus"></span></header>
+      <div class="gh-row">
+        <label class="label" for="repoName">Repository</label>
+        <input type="text" id="repoName" placeholder="your-username/persimmon-planner" autocomplete="off">
+        <button class="btn sm" id="copyAll">Copy sprint setup commands</button>
+      </div>
+      <div class="tablewrap">
+        <table class="map">
+          <thead><tr><th>In this tracker</th><th>On GitHub</th><th>How it stays in sync</th></tr></thead>
+          <tbody>
+            <tr><td>Story card <code>#4</code></td><td>Issue #4</td><td>Same number and title. Acceptance criteria go in the issue body as a checklist.</td></tr>
+            <tr><td>Sprint 1, Sprint 2…</td><td>Milestone with a due date</td><td>Sprint end date = milestone due date. Velocity = points closed in that milestone.</td></tr>
+            <tr><td>Planner / Game / Portfolio · PM / Dev</td><td>Labels</td><td><code>area:game</code>, <code>owner:pm</code>, <code>pts:3</code></td></tr>
+            <tr><td>To do → In progress → In review</td><td>GitHub Project board columns</td><td>Work happens on a branch like <code>4-course-tracker</code>. Opening a PR moves the card to In review.</td></tr>
+            <tr><td>Done</td><td>Issue closed</td><td>A PR that says <code>Closes #4</code> is merged after you, the PM, accept it.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <details style="margin-top:10px"><summary class="note">Show the commands</summary><div class="cmds" id="cmds"></div></details>
+    </article>
+
+    <div class="board" id="board"></div>
+
+    <div class="grid-2">
+      <article class="panel">
+        <header><h3>Sprint 1 burndown</h3><div class="legend"><span><i></i>Points left</span><span><i class="ideal"></i>Ideal pace</span></div></header>
+        <div class="chart-wrap" id="burnWrap" style="position:relative"></div>
+        <p class="note" style="margin-top:6px">Each point on the line shows the points left at the end of that day. Hover for values.</p>
+      </article>
+      <article class="panel">
+        <header><h3>Roadmap</h3><span class="label">Two-week sprints</span></header>
+        <ol class="roadmap" id="roadmap" style="grid-template-columns:minmax(0,1fr)"></ol>
+      </article>
+    </div>
+
+    <article class="panel">
+      <header><h3>Game app · Lean canvas</h3><span class="label">Story #8 · saves in this browser</span></header>
+      <div class="canvas" id="canvas"></div>
+    </article>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section class="wrap view" id="view-portfolio" hidden>
+    <div class="view-head">
+      <div>
+        <span class="label">Portfolio</span>
+        <h2>Work, résumé and the game</h2>
+        <p>Uploads arrive in Sprint 4 and the live GitHub feed in Sprint 3. Until then, each frame shows where its piece will go.</p>
+      </div>
+    </div>
+    <div class="grid-2">
+      <article class="panel">
+        <header><h3>Game trailer</h3><span class="chip" style="color:var(--shu)">Sprint 4</span></header>
+        <div class="video" id="video"></div>
+      </article>
+      <article class="panel">
+        <header><h3>Résumé</h3><span class="chip" style="color:var(--ai)">PDF · Sprint 4</span></header>
+        <div class="kakejiku" aria-hidden="true">
+          <div class="ln" style="width:45%;height:13px;background:var(--ink)"></div>
+          <div class="ln" style="width:70%"></div>
+          <div class="ln" style="width:30%;background:var(--shu);margin-top:8px"></div>
+          <div class="ln"></div><div class="ln" style="width:88%"></div><div class="ln" style="width:76%"></div>
+          <div class="ln" style="width:30%;background:var(--shu);margin-top:8px"></div>
+          <div class="ln"></div><div class="ln" style="width:64%"></div>
+          <div class="seal">履</div>
+        </div>
+        <p class="note" style="margin-top:10px">Target roles: consulting analyst and associate product manager. Put the certificates first, then the game as a product case study.</p>
+      </article>
+    </div>
+    <article class="panel">
+      <header><h3>Other work</h3><span class="label">Case studies</span></header>
+      <div class="work-grid" id="workGrid"></div>
+    </article>
+    <article class="panel">
+      <header><h3>GitHub activity</h3><span class="chip" style="color:var(--yanagi)">Sample rows · live in Sprint 3</span></header>
+      <div class="gh">
+        <div class="ln"><span class="sha">v2</span><span>Sprint 1: woodblock redesign, animated scenes, sprint tracker</span></div>
+        <div class="ln"><span class="sha">v1</span><span>Sprint 1: basic layout, clock, pomodoro, week plan</span></div>
+      </div>
+    </article>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(() => {
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem('pp:' + k); return v ? JSON.parse(v) : d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem('pp:' + k, JSON.stringify(v)); } catch {} }
+  };
+  const $ = s => document.querySelector(s);
+  const $$ = s => document.querySelectorAll(s);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const toast = msg => { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => t.hidden = true, 2400); };
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+  /* ================= ART (original prints, drawn in code) ================= */
+  const lantern = (x, y, delay, len = 18) => `
+    <g transform="translate(${x} ${y})"><g class="swing" style="animation-delay:${delay}s">
+      <line x1="0" y1="0" x2="0" y2="${len}" stroke="#1C2131" stroke-width="1.5"/>
+      <circle class="glow" cx="0" cy="${len + 30}" r="46" fill="url(#lglow)"/>
+      <rect x="-10" y="${len}" width="20" height="6" fill="#1C2131"/>
+      <ellipse cx="0" cy="${len + 30}" rx="22" ry="27" fill="#E0582E"/>
+      <ellipse cx="0" cy="${len + 30}" rx="14" ry="27" fill="none" stroke="#9E2A18" stroke-width="1.2"/>
+      <ellipse cx="0" cy="${len + 30}" rx="5" ry="27" fill="none" stroke="#9E2A18" stroke-width="1.2"/>
+      <line x1="-22" y1="${len + 30}" x2="22" y2="${len + 30}" stroke="#9E2A18" stroke-width="1"/>
+      <rect x="-10" y="${len + 55}" width="20" height="6" fill="#1C2131"/>
+      <line x1="0" y1="${len + 61}" x2="0" y2="${len + 76}" stroke="#E2702A" stroke-width="3"/>
+    </g></g>`;
+  const koi = (y, cls, color, dur, delay) => `
+    <g class="koi ${cls}" style="animation-duration:${dur}s;animation-delay:${delay}s"><g transform="translate(0 ${y}) ${cls === 'r' ? 'scale(-1 1)' : ''}">
+      <path class="tail" d="M-22 0 L-40 -11 L-36 0 L-40 11 Z" fill="${color}"/>
+      <ellipse cx="0" cy="0" rx="24" ry="9" fill="#FAF4E6"/>
+      <ellipse cx="-6" cy="-2" rx="9" ry="5" fill="${color}"/><ellipse cx="12" cy="1" rx="6" ry="4" fill="${color}"/>
+      <circle cx="18" cy="-3" r="1.4" fill="#1C2131"/>
+    </g></g>`;
+  const frog = () => `
+    <g>
+      <ellipse cx="0" cy="0" rx="17" ry="11" fill="#5F7F25"/>
+      <ellipse cx="0" cy="4" rx="11" ry="6" fill="#A5C35B"/>
+      <circle cx="-8" cy="-10" r="6" fill="#5F7F25"/><circle cx="8" cy="-10" r="6" fill="#5F7F25"/>
+      <circle cx="-8" cy="-11" r="3.4" fill="#FAF4E6"/><circle cx="8" cy="-11" r="3.4" fill="#FAF4E6"/>
+      <circle class="blink" cx="-8" cy="-11" r="1.8" fill="#1C2131"/><circle class="blink" cx="8" cy="-11" r="1.8" fill="#1C2131"/>
+      <path d="M-5 -2 Q0 2 5 -2" stroke="#1C2131" stroke-width="1.2" fill="none"/>
+      <path d="M-15 6 q-6 4 -2 6 M15 6 q6 4 2 6" stroke="#5F7F25" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g>`;
+  const cat = () => `
+    <path class="ctail" d="M28 88 C 70 92, 74 50, 56 28" stroke="#0E0E12" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M-32 92 C -42 46, -24 22, 0 20 C 24 22, 42 46, 32 92 Z" fill="#0E0E12"/>
+    <path d="M-20 -6 L-18 -34 L-2 -16 Z M20 -6 L18 -34 L2 -16 Z" fill="#0E0E12"/>
+    <path d="M-15 -14 L-16 -27 L-8 -17 Z M15 -14 L16 -27 L8 -17 Z" fill="#B24A3C"/>
+    <circle cx="0" cy="4" r="23" fill="#0E0E12"/>
+    <ellipse class="blink" cx="-9" cy="0" rx="4" ry="5" fill="#E8B04A"/><ellipse class="blink" cx="9" cy="0" rx="4" ry="5" fill="#E8B04A"/>
+    <rect x="-9.6" y="-3" width="1.4" height="6" fill="#0E0E12" class="blink"/><rect x="8.4" y="-3" width="1.4" height="6" fill="#0E0E12" class="blink"/>
+    <path d="M-20 26 Q0 34 20 26" stroke="#CF3B26" stroke-width="4" fill="none"/>
+    <circle cx="0" cy="33" r="3.5" fill="#D9A441"/>
+    <g transform="translate(-2 16) rotate(-10)">
+      <path d="M22 0 L36 -9 L33 0 L36 9 Z" fill="#B9822C"/>
+      <ellipse cx="0" cy="0" rx="24" ry="8" fill="#D9A441"/>
+      <path d="M-8 -6 q4 6 0 12 M0 -7 q4 7 0 14 M8 -6 q4 6 0 12" stroke="#8E5E1C" stroke-width="1" fill="none"/>
+      <circle cx="-16" cy="-2" r="1.6" fill="#1C2131"/>
+    </g>`;
+
+  function buildWorld() {
+    seed = 11;
+    let strands = '';
+    for (let i = 0; i < 30; i++) { const x = 40 + i * 7 + rnd() * 6, l = 150 + rnd() * 120; strands += `<path d="M${x} ${50 + rnd() * 30} q ${6 - rnd() * 12} ${l / 2} ${-4 + rnd() * 8} ${l}" stroke="${i % 3 ? '#5F7F25' : '#7E9A3A'}" stroke-width="${1.6 + rnd() * 1.4}" fill="none"/>`; }
+    let rain = ''; for (let i = 0; i < 70; i++) rain += `<line class="drop" x1="${rnd() * 1200}" y1="0" x2="${rnd() * 1200 - 4}" y2="22" stroke="#C8D6EE" stroke-opacity=".35" stroke-width="1" style="animation-delay:${(-rnd() * 1.1).toFixed(2)}s;animation-duration:${(0.8 + rnd() * 0.6).toFixed(2)}s"/>`;
+    rain = rain.replace(/x1="([\d.]+)" y1="0" x2="[\d.-]+"/g, (m, a) => `x1="${a}" y1="0" x2="${(+a - 5).toFixed(1)}"`);
+    let petals = ''; for (let i = 0; i < 12; i++) petals += `<ellipse class="petal" cx="${300 + rnd() * 900}" cy="0" rx="5" ry="3" fill="${i % 2 ? '#E7A3A0' : '#E2702A'}" style="animation-delay:${(-rnd() * 12).toFixed(1)}s;animation-duration:${(9 + rnd() * 6).toFixed(1)}s"/>`;
+    let flies = ''; for (let i = 0; i < 14; i++) flies += `<circle class="fly" cx="${200 + rnd() * 900}" cy="${150 + rnd() * 140}" r="2.2" fill="#F5D77A" style="animation-delay:${(-rnd() * 4).toFixed(1)}s"/>`;
+    $('#world').innerHTML = `
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--sky2)"/><stop offset="1" style="stop-color:var(--sky1)"/></linearGradient>
+        <radialGradient id="lglow"><stop offset="0" stop-color="#FFB45A" stop-opacity=".7"/><stop offset="1" stop-color="#FFB45A" stop-opacity="0"/></radialGradient>
+        <pattern id="sei" width="44" height="22" patternUnits="userSpaceOnUse">
+          <rect width="44" height="22" style="fill:var(--water)"/>
+          ${[[0, 11], [44, 11], [22, 22], [0, 33], [44, 33]].map(([x, y]) => [20, 14, 8].map(r => `<circle cx="${x}" cy="${y}" r="${r}" style="fill:var(--water);stroke:var(--foam)" stroke-width="1.3"/>`).join('')).join('')}
+        </pattern>
+      </defs>
+      <rect width="1200" height="400" fill="url(#sky)"/>
+      <g transform="translate(900 120)">
+        <circle r="74" style="fill:var(--sun)"/>
+        <g class="sun-r">${[60, 48, 36, 24].map(r => `<circle r="${r}" fill="none" style="stroke:var(--sun2)" stroke-width="3" stroke-dasharray="10 6" opacity=".55"/>`).join('')}</g>
+      </g>
+      <g class="drift"><rect x="120" y="70" width="260" height="16" rx="8" style="fill:var(--cloud)"/><rect x="170" y="92" width="180" height="12" rx="6" style="fill:var(--cloud)"/></g>
+      <g class="drift" style="animation-duration:80s;animation-direction:alternate-reverse"><rect x="640" y="190" width="300" height="14" rx="7" style="fill:var(--cloud)" opacity=".8"/></g>
+      <path d="M0 290 L150 210 L260 250 L470 120 L560 175 L640 250 L800 200 L1000 262 L1200 215 L1200 330 L0 330Z" style="fill:var(--mtn)"/>
+      <path d="M440 140 L470 120 L500 140 L488 146 L470 138 L452 146Z" fill="#FAF4E6" opacity=".85"/>
+      <path d="M0 320 L200 270 L420 300 L700 262 L900 300 L1200 270 L1200 340 L0 340Z" style="fill:var(--mtn2)"/>
+      <path d="M300 22 Q 560 70 820 26" stroke="#1C2131" stroke-width="1.5" fill="none"/>
+      ${lantern(360, 34, 0)}${lantern(470, 48, -.8, 22)}${lantern(580, 50, -1.6, 26)}${lantern(690, 42, -2.4, 20)}${lantern(790, 28, -.4)}
+      <rect x="0" y="318" width="1200" height="82" fill="url(#sei)"/>
+      ${koi(360, '', '#E2702A', 26, 0)}${koi(380, 'r', '#CF3B26', 34, -12)}${koi(345, '', '#1C2131', 40, -25)}
+      <ellipse class="ripple" cx="530" cy="340" rx="18" ry="4" fill="none" stroke="#FAF4E6" stroke-opacity=".6"/>
+      <ellipse class="ripple" cx="760" cy="355" rx="18" ry="4" fill="none" stroke="#FAF4E6" stroke-opacity=".6" style="animation-delay:-2s"/>
+      ${[440, 550, 660].map((x, i) => `<path d="M${x} 336 a34 9 0 1 0 0.1 0 Z" fill="${i === 1 ? '#7E9A3A' : '#5F7F25'}"/><path d="M${x} 336 l12 -4 l0 6Z" style="fill:var(--water)"/>`).join('')}
+      <circle cx="${660 + 24}" cy="328" r="6" fill="#E7A3A0"/><circle cx="${660 + 24}" cy="328" r="2.5" fill="#F5D77A"/>
+      <g transform="translate(440 322)"><g class="frog">${frog()}</g></g>
+      <g transform="translate(0 0)"><path d="M70 330 C 80 240, 60 160, 110 60 L130 64 C 92 160, 112 250, 104 330Z" fill="#2B2216"/>
+        <path d="M110 60 C 150 40, 200 50, 260 60" stroke="#2B2216" stroke-width="9" fill="none"/>
+        <g class="sway">${strands}${strands.replace(/M(\d+)/g, (m, x) => 'M' + (+x + 120))}</g></g>
+      <ellipse cx="1040" cy="330" rx="74" ry="20" fill="#2E3446"/>
+      <g transform="translate(1040 228)">${cat()}</g>
+      <g class="rain">${rain}</g><g class="petals">${petals}</g><g class="flies">${flies}</g>`;
+  }
+
+  // Small card prints
+  function art(kind) {
+    const S = (body, bg) => `<svg viewBox="0 0 260 170" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="260" height="170" fill="${bg}"/>${body}</svg>`;
+    const hex = (cx, cy, r) => Array.from({ length: 6 }, (_, i) => { const a = Math.PI / 3 * i + Math.PI / 6; return (cx + r * Math.cos(a)).toFixed(1) + ',' + (cy + r * Math.sin(a)).toFixed(1); }).join(' ');
+    switch (kind) {
+      case 'ibm': return S(`<g class="slowspin">${[80, 66, 52, 38, 24, 10].map((r, i) => `<polygon points="${hex(185, 70, r)}" fill="${i % 2 ? '#F1E7D4' : '#CF3B26'}"/>`).join('')}</g>
+        <path d="M0 140 Q 30 120 60 140 T 120 140 T 180 140 T 240 140 T 300 140 V170 H0Z" fill="#1A2C52"/>
+        <path d="M0 150 Q 30 132 60 150 T 120 150 T 180 150 T 240 150 T 300 150" stroke="#F1E7D4" stroke-width="2" fill="none"/>`, '#27467A');
+      case 'gai': return S(`<rect x="140" y="14" width="96" height="142" fill="#3D6FA8"/>
+        <g class="sway"><path d="M260 20 C 200 30, 170 60, 120 70 C 90 76, 60 100, 30 96" stroke="#3B2A1A" stroke-width="5" fill="none"/>
+        ${[[120, 84], [150, 70], [180, 58], [100, 96], [205, 52], [70, 102]].map(([x, y], i) => `<line x1="${x}" y1="${y - 10}" x2="${x}" y2="${y - 4}" stroke="#3B2A1A" stroke-width="2"/><circle cx="${x}" cy="${y + 4}" r="${9 + (i % 3) * 2}" fill="${i % 2 ? '#E2702A' : '#D9581F'}"/><path d="M${x - 4} ${y - 6} q4 -6 8 0" fill="#5F7F25"/>`).join('')}</g>
+        <text x="24" y="40" font-family="Shippori Mincho B1, serif" font-size="18" fill="#9E2A18" writing-mode="tb">柿</text>`, '#ECE1CB');
+      case 'pyramid': return S(`${[0, 1, 2, 3].map(i => `<polygon points="${130 - 30 - i * 26},${150 - i * 30} ${130 + 30 + i * 26},${150 - i * 30} ${130 + 6 + i * 26 - 0},${120 - i * 30} ${130 - 6 - i * 26},${120 - i * 30}" fill="${i % 2 ? '#1C2131' : '#F1E7D4'}"/>`).reverse().join('')}
+        <polygon points="130,22 112,50 148,50" fill="#F1E7D4"/><circle cx="210" cy="40" r="18" fill="#F1E7D4" class="pulse"/>`, '#CF3B26');
+      case 'tunnel': return S(`<g class="pulse">${Array.from({ length: 9 }, (_, i) => `<rect x="${10 + i * 14}" y="${4 + i * 9}" width="${240 - i * 28}" height="${162 - i * 18}" fill="${i % 2 ? '#E8DAB8' : '#2C4E6E'}"/>`).join('')}</g>
+        <ellipse cx="80" cy="140" rx="16" ry="20" fill="#1C2131"/><rect x="72" y="114" width="16" height="8" fill="#1C2131"/><circle cx="80" cy="140" r="6" fill="#D9A441"/>
+        <ellipse cx="190" cy="150" rx="22" ry="8" fill="#CF3B26"/>`, '#E8DAB8');
+      case 'lotus': return S(`${[[-60, 70], [-30, 80], [0, 86], [30, 80], [60, 70]].map(([r, h]) => `<path d="M130 150 C ${130 + r * .5 - 26} ${150 - h * .6}, ${130 + r - 6} ${150 - h}, ${130 + r} ${150 - h} C ${130 + r + 6} ${150 - h}, ${130 + r * .5 + 26} ${150 - h * .6}, 130 150Z" fill="#B9C6E2" stroke="#1A2C52" stroke-width="1.5" opacity=".9"/>`).join('')}
+        ${Array.from({ length: 26 }, (_, i) => `<line class="drop" x1="${i * 10}" y1="0" x2="${i * 10 - 3}" y2="14" stroke="#E8EEF8" stroke-opacity=".5" style="animation-delay:-${(i * .37) % 1.1}s;animation-duration:1.6s"/>`).join('')}
+        <rect x="20" y="40" width="36" height="110" fill="#CF3B26"/><g class="slowspin">${[16, 11, 6].map((r, i) => `<polygon points="${hex(38, 70, r)}" fill="none" stroke="#F1E7D4" stroke-width="2"/>`).join('')}</g>`, '#2A3F6E');
+      case 'kettle': return S(`<rect x="60" y="40" width="150" height="120" fill="#E9C2BA"/>
+        ${[0, 1, 2].map(i => `<circle class="steam" cx="${90 + i * 8}" cy="${44 - i * 4}" r="${9 - i}" fill="none" stroke="#9E2A18" stroke-width="1.5" style="animation-delay:-${i}s"/>`).join('')}
+        <path d="M100 150 C 90 110, 110 86, 140 86 C 170 86, 188 110, 180 150 Z" fill="#CF3B26"/>
+        <path d="M104 100 L 80 70" stroke="#CF3B26" stroke-width="9" stroke-linecap="round"/>
+        <path d="M118 90 C 118 60, 162 60, 162 90" stroke="#1C2131" stroke-width="4" fill="none"/>
+        <ellipse cx="140" cy="86" rx="22" ry="5" fill="#1C2131"/><circle cx="140" cy="78" r="5" fill="#5F7F25"/>
+        <rect x="96" y="148" width="92" height="10" fill="#F1E7D4"/>`, '#F1E7D4');
+      case 'koi': return S(`${Array.from({ length: 6 }, (_, i) => `<path d="M0 ${20 + i * 28} Q 65 ${i * 28} 130 ${20 + i * 28} T 260 ${20 + i * 28}" stroke="#F1E7D4" stroke-width="3" fill="none" opacity=".7"/>`).join('')}
+        <g transform="translate(130 85)"><g class="slowspin" style="animation-duration:14s"><g transform="translate(46 0) rotate(90)">
+        <path d="M-22 0 L-38 -10 L-34 0 L-38 10Z" fill="#CF3B26"/><ellipse rx="24" ry="9" fill="#FAF4E6"/><ellipse cx="-4" cy="-2" rx="9" ry="5" fill="#CF3B26"/><circle cx="17" cy="-3" r="1.5" fill="#1C2131"/></g></g></g>
+        <circle cx="130" cy="85" r="16" fill="#D9A441"/>`, '#27467A');
+      case 'neon': return S(`<rect x="0" y="0" width="260" height="170" fill="#2A1F3D"/>
+        <rect x="20" y="10" width="40" height="120" fill="#3B2B52"/><rect x="190" y="0" width="50" height="140" fill="#3B2B52"/>
+        <rect class="flicker" x="28" y="22" width="24" height="56" fill="#E86AA0" opacity=".85"/><rect x="198" y="16" width="34" height="18" fill="#7FE0C2" opacity=".85"/>
+        <rect class="flicker" x="198" y="44" width="34" height="40" fill="#F2A65A" style="animation-delay:-1s" opacity=".8"/>
+        <path d="M110 170 L110 120 Q 112 104 124 104 Q 136 104 138 120 L138 170Z" fill="#141019"/><circle cx="124" cy="96" r="9" fill="#141019"/>
+        <path d="M98 100 Q 124 74 150 100Z" fill="#CF3B26"/>
+        ${Array.from({ length: 30 }, (_, i) => `<line class="drop" x1="${(i * 9) % 260}" y1="0" x2="${(i * 9) % 260 - 3}" y2="12" stroke="#E8E0FF" stroke-opacity=".45" style="animation-delay:-${(i * .29) % 1.1}s"/>`).join('')}`, '#2A1F3D');
+      case 'willow': return S(`<rect y="110" width="260" height="60" fill="#1F4A3A"/>
+        <g class="sway" style="transform-origin:130px 0">${Array.from({ length: 40 }, (_, i) => `<path d="M${i * 7} 0 q ${(i % 5) - 2} 60 ${(i % 3) - 1} ${90 + (i * 37) % 40}" stroke="${i % 2 ? '#8DB33A' : '#5F7F25'}" stroke-width="3" fill="none"/>`).join('')}</g>
+        <path d="M60 120 h4 v-10 h-4z M100 118 h4 v-8 h-4z" fill="#0E1A14"/>`, '#A9C760');
+    }
+  }
+
+  /* ================= DATA ================= */
+  const TRACKS = { ibm: { name: 'IBM Management Consultant', short: 'Consulting' }, gai: { name: 'Google AI', short: 'Google AI' }, game: { name: 'Game product', short: 'Game' }, read: { name: 'Reading', short: 'Reading' }, review: { name: 'Sprint ceremonies', short: 'Scrum' } };
+  const COURSES = [
+    { id: 'ibm', title: 'IBM Management Consultant Professional Certificate', provider: 'IBM · Coursera', art: 'ibm',
+      modules: ['Introduction to Management Consulting', 'Introduction to Business Analysis', 'Course 3 (confirm title)', 'Course 4 (confirm title)', 'Course 5 (confirm title)', 'Course 6 (confirm title)', 'Course 7 (confirm title)', 'Capstone: Integrated Management Consulting Project'] },
+    { id: 'gai', title: 'Google AI Professional Certificate', provider: 'Google · Coursera', art: 'gai',
+      modules: ['Course 1 (confirm title)', 'Course 2 (confirm title)', 'Course 3 (confirm title)', 'Course 4 (confirm title)', 'Course 5 (confirm title)', 'Course 6 (confirm title)', 'Course 7 (confirm title)', 'Capstone project'] }
+  ];
+  const BOOKS = [
+    { id: 'b1', title: 'The Pyramid Principle', by: 'Barbara Minto', why: 'Structure every slide and email', art: 'pyramid', track: 'ibm' },
+    { id: 'b2', title: 'The McKinsey Way', by: 'Ethan M. Rasiel', why: 'How consultants work a problem', art: 'tunnel', track: 'ibm' },
+    { id: 'b3', title: 'Inspired', by: 'Marty Cagan', why: 'How strong product teams work', art: 'lotus', track: 'gai' },
+    { id: 'b4', title: 'The Lean Startup', by: 'Eric Ries', why: 'Build, measure, learn', art: 'kettle', track: 'game' },
+    { id: 'b5', title: 'The Art of Game Design', by: 'Jesse Schell', why: 'Lenses for your game’s design', art: 'koi', track: 'game' },
+    { id: 'b6', title: 'Blood, Sweat, and Pixels', by: 'Jason Schreier', why: 'How real games get shipped', art: 'neon', track: 'game' }
+  ];
+  const BOOK_STATES = ['To read', 'Reading', 'Finished'];
+  const PLAN = [
+    { day: 1, start: '19:00', end: '20:30', track: 'ibm', title: 'Consulting: new material', agenda: [['2 min', 'Stand-up: last time / this time / blockers.'], ['25 min', 'Pomodoro 1: next lesson, notes in two columns (idea | client example).'], ['25 min', 'Pomodoro 2: finish the lesson and the practice quiz.'], ['15 min', 'Write 3 bullets you’d say to a client. Add them to the learning log.']] },
+    { day: 2, start: '19:00', end: '20:30', track: 'gai', title: 'Google AI: new material', agenda: [['2 min', 'Stand-up, then set the goal: finish one module.'], ['25 min', 'Pomodoro 1: lessons. Try every prompt yourself.'], ['25 min', 'Pomodoro 2: hands-on activity.'], ['15 min', 'Product angle: one way this could improve your game.']] },
+    { day: 3, start: '19:00', end: '20:15', track: 'game', title: 'Game: one story from the board', agenda: [['2 min', 'Stand-up. Move ONE story to In progress.'], ['50 min', 'Two pomodoros on that story only.'], ['10 min', 'Commit with “#issue” in the message and push. Update the card.']] },
+    { day: 3, start: '21:30', end: '21:50', track: 'read', title: 'Reading before bed', agenda: [['20 min', 'Read the current book. Mark one quote worth keeping.']] },
+    { day: 4, start: '19:00', end: '20:30', track: 'ibm', title: 'Consulting: practise it', agenda: [['2 min', 'Stand-up.'], ['10 min', 'Pick a framework from Monday (issue tree, stakeholder map…).'], ['50 min', 'Apply it to your game as if it were a client. One page.'], ['15 min', 'Finish any graded assignment due this week.']] },
+    { day: 5, start: '', end: '', track: 'rest', title: 'Rest day', agenda: [] },
+    { day: 6, start: '10:00', end: '11:30', track: 'gai', title: 'Deep work: Google AI', agenda: [['75 min', 'Three pomodoros: finish the week’s module and any assignment.'], ['15 min', 'Write a short AI feature idea (PRD stub) for the game.']] },
+    { day: 6, start: '14:00', end: '15:30', track: 'game', title: 'Deep work: game build', agenda: [['75 min', 'Three pomodoros on the biggest open story.'], ['15 min', 'Record a 20-second progress clip for the trailer.']] },
+    { day: 0, start: '10:30', end: '11:30', track: 'read', title: 'Reading + notes', agenda: [['45 min', 'Read and take notes.'], ['15 min', 'Turn one idea into a learning-log entry.']] },
+    { day: 0, start: '17:00', end: '17:45', track: 'review', title: 'Sprint ceremony', agenda: [['Mid-sprint', 'Backlog check: re-order the backlog and confirm next week’s stories.'], ['Last Sunday', 'Review: demo what’s Done and accept or reject each story.'], ['Last Sunday', 'Retro: one thing to keep, one to change.'], ['Last Sunday', 'Planning: pick the next sprint’s stories up to capacity.']] }
+  ];
+  const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const mins = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+  const dur = s => s.start ? mins(s.end) - mins(s.start) : 0;
+  const fmtH = m => (m / 60).toFixed(m % 60 ? 1 : 0) + ' h';
+
+  /* ================= CLOCK + SCENE ================= */
+  function isoWeek(d) { const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); const y = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return Math.ceil(((t - y) / 864e5 + 1) / 7); }
+  function tick() {
+    const n = new Date();
+    $('#clockTime').textContent = n.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    $('#clockDate').textContent = n.toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }) + ' · Wk ' + isoWeek(n);
+    const h = n.getHours(); const tod = h >= 5 && h < 9 ? 'dawn' : h >= 9 && h < 17 ? 'day' : h >= 17 && h < 20 ? 'dusk' : 'night';
+    if ($('#scene').dataset.tod !== tod) $('#scene').dataset.tod = tod;
+    $('#greet').textContent = { dawn: 'Good morning', day: 'Good afternoon', dusk: 'Good evening', night: 'Good evening' }[tod];
+    $('#greetTag').textContent = DAYS[n.getDay()] + ' · Week ' + isoWeek(n) + ' · ' + { dawn: 'dawn', day: 'daylight', dusk: 'dusk', night: 'night rain' }[tod];
+  }
+
+  /* ================= TODAY ================= */
+  function nextSessions() {
+    const now = new Date(); const out = [];
+    for (let i = 0; i < 8 && out.length < 3; i++) {
+      const d = new Date(now); d.setDate(now.getDate() + i);
+      PLAN.filter(s => s.day === d.getDay() && s.start).sort((a, b) => mins(a.start) - mins(b.start)).forEach(s => {
+        const st = new Date(d), en = new Date(d); const [h, m] = s.start.split(':'), [h2, m2] = s.end.split(':');
+        st.setHours(+h, +m, 0, 0); en.setHours(+h2, +m2, 0, 0);
+        if (en > now) out.push({ s, st, en, live: st <= now });
+      });
+    }
+    return out;
+  }
+  function renderToday() {
+    const list = nextSessions(); const el = $('#todaySession');
+    if (!list.length) { el.innerHTML = '<span class="label">Next session</span><h2>Nothing planned</h2>'; return; }
+    const { s, st, live } = list[0];
+    const diff = Math.max(0, Math.round((st - new Date()) / 60000));
+    const dayWord = st.toDateString() === new Date().toDateString() ? 'Today' : DAYS[st.getDay()];
+    const when = live ? 'Happening now · until ' + s.end : `${dayWord} ${s.start}–${s.end} · in ${diff >= 60 ? Math.floor(diff / 60) + ' h ' : ''}${diff % 60} min`;
+    $('#greetNext').textContent = live ? 'Now: ' + s.title : `Next: ${dayWord} ${s.start}`;
+    el.innerHTML = `
+      <span class="label">${live ? 'Session in progress' : 'Next study session'} · ${esc(TRACKS[s.track].name)}</span>
+      <h2>${esc(s.title)}</h2><div class="when">${esc(when)}</div>
+      <ol class="agenda">${s.agenda.map(([m, t]) => `<li><span class="m">${esc(m)}</span><span>${esc(t)}</span></li>`).join('')}</ol>
+      <div class="actions"><button class="btn primary" id="startSession">Start focus block</button><a class="btn" href="#plan">See the week</a></div>
+      ${list[1] ? `<p class="later">After that: ${esc(DAYS[list[1].st.getDay()])} ${list[1].s.start} · ${esc(list[1].s.title)}</p>` : ''}`;
+    $('#startSession').onclick = () => { setMode('focus'); startPomo(); toast('Focus block started: ' + s.title); };
+  }
+
+  /* ================= POMODORO ================= */
+  const LEN = { focus: 1500, short: 300, long: 900 }, LABEL = { focus: 'Focus', short: 'Short break', long: 'Long break' };
+  let mode = 'focus', remaining = LEN.focus, endAt = 0, timer = null, cycle = 0, actx = null;
+  const todayKey = () => 'pomo:' + new Date().toDateString();
+  function buildRiver() {
+    $('#river').innerHTML = `<svg viewBox="0 0 400 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="400" height="110" fill="#1A2C52"/>
+      ${[0, 1, 2, 3].map(i => `<path d="M0 ${48 + i * 16} ${Array.from({ length: 11 }, (_, k) => `q 10 -8 20 0 t 20 0`).join(' ')}" stroke="#4E78AE" stroke-width="2" fill="none" opacity="${.9 - i * .15}"/>`).join('')}
+      <rect x="378" y="18" width="6" height="80" fill="#CF3B26"/><path d="M384 20 h14 l-4 7 l4 7 h-14z" fill="#E2702A"/>
+      <g class="tiger-move" id="tigerMove"><g class="tiger-bob">
+        <path d="M-30 52 C -48 44, -50 30, -40 24" stroke="#E2702A" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <rect class="paddle" x="-18" y="58" width="5" height="12" rx="2" fill="#E2702A"/><rect class="paddle" x="10" y="58" width="5" height="12" rx="2" fill="#E2702A" style="animation-delay:-.17s"/>
+        <ellipse cx="0" cy="52" rx="32" ry="12" fill="#E2702A"/>
+        <path d="M-18 41 q3 10 -1 20 M-6 40 q3 11 -1 23 M6 40 q3 11 -1 23 M18 42 q3 9 -1 18" stroke="#1C2131" stroke-width="3" fill="none"/>
+        <circle cx="34" cy="44" r="13" fill="#E2702A"/>
+        <path d="M26 33 l2 -8 l6 6z M38 31 l5 -7 l2 8z" fill="#E2702A"/>
+        <ellipse cx="40" cy="50" rx="7" ry="5" fill="#FAF4E6"/>
+        <circle cx="36" cy="41" r="2" fill="#1C2131"/><circle cx="44" cy="42" r="2" fill="#1C2131"/>
+        <path d="M26 38 l5 2 M30 34 l3 4" stroke="#1C2131" stroke-width="2"/>
+        <rect x="-40" y="56" width="90" height="16" fill="#1A2C52" opacity=".55"/>
+      </g></g>
+      <g class="sleeper" transform="translate(200 60)">
+        <ellipse cx="0" cy="18" rx="70" ry="10" fill="#2E3446"/>
+        <path d="M-34 14 C -34 -14, 30 -16, 34 10 C 36 20, -30 22, -34 14Z" fill="#0E0E12"/>
+        <circle cx="-26" cy="4" r="13" fill="#0E0E12"/><path d="M-36 -4 l-2 -10 l8 5z M-22 -8 l4 -9 l3 9z" fill="#0E0E12"/>
+        <path d="M-31 4 q3 2 6 0 M-23 4 q3 2 6 0" stroke="#E8B04A" stroke-width="1.5" fill="none"/>
+        <path d="M30 12 C 44 16, 40 26, 10 22" stroke="#0E0E12" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <text class="zz" x="-14" y="-16" font-family="Shippori Mincho B1, serif" font-size="16" fill="#F1E7D4">z</text>
+        <text class="zz" x="-4" y="-26" font-family="Shippori Mincho B1, serif" font-size="12" fill="#F1E7D4" style="animation-delay:-1.2s">z</text>
+      </g></svg>`;
+  }
+  function drawPomo() {
+    const m = Math.floor(remaining / 60), s = remaining % 60;
+    $('#pomoTime').textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    const p = 1 - remaining / LEN[mode];
+    $('#tigerMove').style.transform = `translate(${40 + p * 290}px, 0)`;
+    $('#river').classList.toggle('brk', mode !== 'focus');
+    $('#river').classList.toggle('paused', !timer);
+    $('#pomoStart').textContent = timer ? 'Pause' : (remaining < LEN[mode] ? 'Resume' : 'Start');
+    $('#tomatoes').innerHTML = Array.from({ length: 4 }, (_, i) => `<span class="${i < cycle ? '' : 'empty'}"></span>`).join('');
+    const n = store.get(todayKey(), 0); $('#pomoToday').textContent = `${n} today · ${fmtH(n * 25)} · ${LABEL[mode]}`;
+    document.title = timer ? `${$('#pomoTime').textContent} · ${LABEL[mode]}` : 'Persimmon Planner';
+  }
+  function setMode(m) { stopPomo(); mode = m; remaining = LEN[m]; $$('.modes button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === m))); drawPomo(); }
+  function chime() { try { if (!actx) return; [0, .25, .5].forEach((t, i) => { const o = actx.createOscillator(), g = actx.createGain(); o.frequency.value = [660, 880, 990][i]; o.connect(g); g.connect(actx.destination); g.gain.setValueAtTime(.0001, actx.currentTime + t); g.gain.exponentialRampToValueAtTime(.25, actx.currentTime + t + .02); g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + t + .5); o.start(actx.currentTime + t); o.stop(actx.currentTime + t + .55); }); } catch {} }
+  function startPomo() {
+    try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); } catch {}
+    endAt = Date.now() + remaining * 1000;
+    timer = setInterval(() => { remaining = Math.max(0, Math.round((endAt - Date.now()) / 1000)); remaining === 0 ? finish() : drawPomo(); }, 250);
+    drawPomo();
+  }
+  function stopPomo() { clearInterval(timer); timer = null; }
+  function finish() {
+    stopPomo(); chime();
+    if (mode === 'focus') { store.set(todayKey(), store.get(todayKey(), 0) + 1); cycle++;
+      if (cycle >= 4) { cycle = 0; setMode('long'); toast('Four done. The tiger made it. Take 15 minutes.'); } else { setMode('short'); toast('Focus block done. Take 5.'); } }
+    else { setMode('focus'); toast('Break over. Ready for the next block.'); }
+  }
+  $('#pomoStart').onclick = () => timer ? (stopPomo(), drawPomo()) : startPomo();
+  $('#pomoReset').onclick = () => setMode(mode);
+  $$('.modes button').forEach(b => b.onclick = () => setMode(b.dataset.mode));
+
+  /* ================= COURSES ================= */
+  const doneMap = () => store.get('done', {}), titleMap = () => store.get('titles', {});
+  const doneCount = c => { const d = doneMap(); return c.modules.filter((_, i) => d[c.id + ':' + i]).length; };
+  const pct = c => Math.round(100 * doneCount(c) / c.modules.length);
+
+  function renderCarousel() {
+    const bs = store.get('books', {});
+    $('#carTrack').innerHTML = COURSES.map(c => `
+      <article class="c-card t-${c.id}"><div class="art">${art(c.art)}<span class="chip kind">Certificate</span></div>
+        <div class="c-body"><h3>${esc(c.title)}</h3><span class="sub">${esc(c.provider)} · ${c.modules.length} courses</span>
+          <div class="bar-o"><i style="width:${pct(c)}%"></i></div>
+          <div class="c-foot"><span class="num">${doneCount(c)} / ${c.modules.length} done</span><a href="#learn" style="color:var(--ai)">Open</a></div></div></article>`).join('') +
+      BOOKS.map(b => { const st = bs[b.id] || 0; return `
+      <article class="c-card t-${b.track}"><div class="art">${art(b.art)}<span class="chip kind">Book</span></div>
+        <div class="c-body"><h3>${esc(b.title)}</h3><span class="sub">${esc(b.by)} · ${esc(b.why)}</span>
+          <div class="bar-o"><i style="width:${st * 50}%"></i></div>
+          <div class="c-foot"><span class="chip" style="color:var(--c)"><span class="dot"></span>${esc(TRACKS[b.track].short)}</span><button class="status-btn" data-book="${b.id}" aria-label="Change status of ${esc(b.title)}">${BOOK_STATES[st]}</button></div></div></article>`; }).join('');
+    $$('[data-book]').forEach(btn => btn.onclick = () => { const all = store.get('books', {}); all[btn.dataset.book] = ((all[btn.dataset.book] || 0) + 1) % 3; store.set('books', all); renderCarousel(); renderStats(); });
+  }
+  const step = () => ($('#carTrack').firstElementChild?.getBoundingClientRect().width || 240) + 16;
+  $('#carPrev').onclick = () => $('#carTrack').scrollBy({ left: -step(), behavior: 'smooth' });
+  $('#carNext').onclick = () => $('#carTrack').scrollBy({ left: step(), behavior: 'smooth' });
+
+  function renderStats() {
+    const bs = store.get('books', {}), fin = BOOKS.filter(b => bs[b.id] === 2).length, reading = BOOKS.filter(b => bs[b.id] === 1).length;
+    const tiles = [...COURSES.map(c => ({ k: c.provider.split(' ·')[0] + ' certificate', v: pct(c) + '%', s: `${doneCount(c)} of ${c.modules.length} courses complete`, c: c.id, st: c.id === 'ibm' ? 'IBM' : 'G·AI' })),
+      { k: 'Reading list', v: `${fin} / ${BOOKS.length}`, s: `${reading} in progress`, c: 'read', st: '読' }];
+    $('#todayStats').innerHTML = tiles.map(t => `<article class="panel stat t-${t.c}"><span class="stamp">${t.st}</span><span class="label"><span class="dot"></span> ${esc(t.k)}</span><div class="num big">${t.v}</div><p class="note">${esc(t.s)}</p></article>`).join('');
+  }
+
+  function pondSvg(c, n) {
+    const W = c.modules.length * 60 + 20;
+    return `<svg class="pond" viewBox="0 0 ${W} 80" aria-label="${n} of ${c.modules.length} courses complete">
+      ${[0, 1].map(i => `<path d="M0 ${30 + i * 22} ${Array.from({ length: Math.ceil(W / 40) }, () => 'q 10 -6 20 0 t 20 0').join(' ')}" stroke="#4E78AE" stroke-width="1.5" fill="none" opacity=".6"/>`).join('')}
+      ${c.modules.map((_, i) => `<g transform="translate(${40 + i * 60} 58)"><ellipse rx="24" ry="8" fill="${i < n ? '#7E9A3A' : '#3E5A2A'}"/>
+        ${i < n ? '<circle cx="12" cy="-4" r="5" fill="#E7A3A0"/><circle cx="12" cy="-4" r="2" fill="#F5D77A"/>' : ''}
+        <text y="20" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#C8D6EE">${i + 1}</text></g>`).join('')}
+      <g class="frogpos" id="frog-${c.id}" style="transform:translate(${40 + Math.min(n, c.modules.length - 1) * 60}px, 46px)"><g class="frogbody"><g transform="scale(.9)">${frog()}</g></g></g>
+    </svg>`;
+  }
+  function renderCourses(jumpId) {
+    const d = doneMap(), t = titleMap();
+    $('#courseCols').innerHTML = COURSES.map(c => { const n = doneCount(c); return `
+      <article class="panel t-${c.id}">
+        <header><div><span class="label">${esc(c.provider)}</span><h3>${esc(c.title)}</h3></div><span class="num" style="font-size:1.5rem">${pct(c)}%</span></header>
+        ${pondSvg(c, n)}
+        <ul class="mods">${c.modules.map((m, i) => { const key = c.id + ':' + i, title = t[key] || m; return `
+          <li class="${d[key] ? 'done' : ''}"><input type="checkbox" id="chk-${c.id}-${i}" data-k="${key}" data-c="${c.id}" ${d[key] ? 'checked' : ''} aria-label="Mark ${esc(title)} complete">
+          <span contenteditable="true" spellcheck="false" data-title="${key}" class="${/confirm/.test(title) ? 'tbc' : ''}">${esc(title)}</span></li>`; }).join('')}</ul>
+      </article>`; }).join('');
+    if (jumpId) { const f = $('#frog-' + jumpId); f.classList.remove('jump'); void f.getBoundingClientRect(); f.classList.add('jump'); }
+    $$('.mods input').forEach(cb => cb.onchange = () => {
+      const all = doneMap(); all[cb.dataset.k] = cb.checked; store.set('done', all);
+      renderCourses(cb.dataset.c); renderCarousel(); renderStats(); if (cb.checked) toast('Ribbit. One pad closer.');
+    });
+    $$('[data-title]').forEach(el => {
+      el.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); el.blur(); } };
+      el.onblur = () => { const all = titleMap(); all[el.dataset.title] = el.textContent.trim(); store.set('titles', all); el.classList.toggle('tbc', /confirm/.test(el.textContent)); };
+    });
+  }
+  const SAMPLE_LOG = [{ track: 'ibm', text: 'Example entry: an issue tree splits a client question into parts that don’t overlap and together cover everything (MECE).', at: 'Example' }];
+  function renderLog() { const log = store.get('log', null) || SAMPLE_LOG; $('#log').innerHTML = log.slice(0, 12).map(e => `<li class="t-${e.track}"><span class="meta">${esc(e.at)} · ${esc(TRACKS[e.track].short)}</span><span>${esc(e.text)}</span></li>`).join(''); }
+  $('#logForm').onsubmit = e => {
+    e.preventDefault(); const text = $('#logText').value.trim(); if (!text) { toast('Write a sentence first.'); return; }
+    const log = store.get('log', []) || []; log.unshift({ track: $('#logTrack').value, text, at: new Date().toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) });
+    store.set('log', log); $('#logText').value = ''; renderLog(); toast('Saved to your learning log');
+  };
+
+  /* ================= WEEK ================= */
+  function renderWeek() {
+    const today = new Date().getDay();
+    $('#week').innerHTML = [1, 2, 3, 4, 5, 6, 0].map(d => {
+      const ss = PLAN.filter(s => s.day === d);
+      return `<div class="day ${d === today ? 'today' : ''} ${d === 0 || d === 6 ? 'weekend' : ''} ${d === 5 ? 'fri' : ''}">
+        <div class="band"><span>${DAYS[d].slice(0, 3)}</span>${d === today ? '<span class="label" style="color:inherit">Today</span>' : ''}</div>
+        <span class="work">${d >= 1 && d <= 5 ? 'Work 09:00–17:00' : 'No work'}</span>
+        ${ss.map(s => s.start ? `<button class="slot t-${s.track}" data-i="${PLAN.indexOf(s)}"><span class="tm">${s.start}–${s.end}</span><span class="nm">${esc(s.title)}</span></button>` : `<div class="slot rest">Rest. No study. Recharge.</div>`).join('')}
+      </div>`; }).join('');
+    $$('.slot[data-i]').forEach(b => b.onclick = () => showSlot(+b.dataset.i));
+    const by = {}; PLAN.forEach(s => { if (s.start) by[s.track] = (by[s.track] || 0) + dur(s); });
+    const total = Object.values(by).reduce((a, b) => a + b, 0);
+    $('#weekTotals').innerHTML = `<div><span class="label">Total</span><span class="num">${fmtH(total)}</span></div>` + Object.entries(by).map(([k, v]) => `<div class="t-${k}"><span class="label"><span class="dot"></span> ${esc(TRACKS[k].short)}</span><span class="num">${fmtH(v)}</span></div>`).join('');
+    showSlot(PLAN.indexOf(nextSessions()[0]?.s ?? PLAN[0]));
+  }
+  function showSlot(i) {
+    const s = PLAN[i];
+    $('#slotDetail').innerHTML = `<header><div><span class="label">${DAYS[s.day]} · ${s.start}–${s.end} · ${fmtH(dur(s))}</span><h3>${esc(s.title)}</h3></div><span class="chip t-${s.track}" style="color:var(--c)"><span class="dot"></span>${esc(TRACKS[s.track].name)}</span></header>
+      <ol class="agenda" style="margin-top:0">${s.agenda.map(([m, t]) => `<li style="background:var(--paper)"><span class="m">${esc(m)}</span><span>${esc(t)}</span></li>`).join('')}</ol>
+      <p class="note" style="margin-top:12px">Teacher’s note: if you miss a weekday session, don’t double up. Move its first pomodoro to Saturday and carry on.</p>`;
+  }
+
+  /* ================= SPRINT TRACKER ================= */
+  const SPRINT = { n: 1, start: new Date(2026, 10, 9), end: new Date(2026, 10, 22), goal: 'A planner you enjoy opening every day, and a clear one-page concept for your game.' };
+  const SPRINTS = [
+    ['Sprint 1', '9–22 Nov', 'Woodblock layout, timer, courses, sprint tracker. Game concept.'],
+    ['Sprint 2', '23 Nov–6 Dec', 'Edit your plan and books in the app. Paper prototype of the game.'],
+    ['Sprint 3', '7–20 Dec', 'GitHub repo + Pages hosting. Board reads Issues live.'],
+    ['Sprint 4', '21 Dec–3 Jan', 'Holiday sprint, lighter load. Upload trailer, résumé, case studies.'],
+    ['Sprint 5', '4–17 Jan', 'First playable game build, released inside the app.']
+  ];
+  const COLS = [['backlog', 'Backlog'], ['todo', 'Sprint · To do'], ['doing', 'In progress'], ['review', 'In review'], ['done', 'Done']];
+  const DEFAULT_STORIES = [
+    { n: 1, t: 'Woodblock redesign with animated scenes', area: 'planner', owner: 'dev', pts: 5, col: 'review', ac: ['Uses the inspo palette and print styles', 'At least 4 moving characters', 'Works on phone and in dark mode'] },
+    { n: 2, t: 'Live clock + next-session card', area: 'planner', owner: 'dev', pts: 2, col: 'done', doneAt: '2026-11-10', ac: ['Shows date, time, week number', 'Shows the next session with its lesson plan'] },
+    { n: 3, t: 'Pomodoro timer with chime', area: 'planner', owner: 'dev', pts: 3, col: 'done', doneAt: '2026-11-10', ac: ['25 / 5 / 15 modes', 'Counts pomodoros per day'] },
+    { n: 4, t: 'Course progress tracker', area: 'planner', owner: 'dev', pts: 3, col: 'done', doneAt: '2026-11-10', ac: ['Tick courses for IBM and Google', 'Progress shows on Today'] },
+    { n: 5, t: 'Sprint tracker shaped like GitHub Issues', area: 'planner', owner: 'dev', pts: 3, col: 'review', ac: ['Issue numbers, labels, milestones', 'Copyable gh commands', 'Burndown chart'] },
+    { n: 6, t: 'Review the v2 redesign and accept or send back #1 and #5', area: 'planner', owner: 'pm', pts: 1, col: 'doing', ac: ['Written feedback in chat'] },
+    { n: 7, t: 'Confirm course titles and which Google course you’re on', area: 'planner', owner: 'pm', pts: 1, col: 'todo', ac: ['All “confirm” titles replaced'] },
+    { n: 8, t: 'Write the game pitch + core loop in the lean canvas', area: 'game', owner: 'pm', pts: 2, col: 'todo', ac: ['One-line pitch', 'Core loop in 3 steps', 'Target player'] },
+    { n: 9, t: 'Create a GitHub account/repo and share the name', area: 'planner', owner: 'pm', pts: 1, col: 'todo', ac: ['Repo exists', 'Name pasted into GitHub link'] },
+    { n: 10, t: 'Choose game engine and platform', area: 'game', owner: 'pm', pts: 2, col: 'todo', ac: ['Compare 2 engines', 'Decision noted in the log'] },
+    { n: 11, t: 'Edit sessions and books inside the app', area: 'planner', owner: 'dev', pts: 5, col: 'backlog', ac: [] },
+    { n: 12, t: 'Deploy to GitHub Pages', area: 'planner', owner: 'dev', pts: 3, col: 'backlog', ac: [] },
+    { n: 13, t: 'Board reads Issues & milestones live', area: 'planner', owner: 'dev', pts: 5, col: 'backlog', ac: [] },
+    { n: 14, t: 'Paper prototype + 3 playtests', area: 'game', owner: 'pm', pts: 5, col: 'backlog', ac: [] },
+    { n: 15, t: 'Upload résumé PDF', area: 'portfolio', owner: 'dev', pts: 2, col: 'backlog', ac: [] },
+    { n: 16, t: 'Capture first trailer clip', area: 'game', owner: 'pm', pts: 3, col: 'backlog', ac: [] }
+  ];
+  const stories = () => store.get('stories-v2', DEFAULT_STORIES);
+  const inSprint = s => s.col !== 'backlog';
+  const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  const repo = () => (store.get('repo', '') || '').trim();
+
+  function renderSprint() {
+    const ss = stories(), sp = ss.filter(inSprint);
+    const committed = sp.reduce((a, s) => a + s.pts, 0), done = sp.filter(s => s.col === 'done').reduce((a, s) => a + s.pts, 0);
+    const pmPts = sp.filter(s => s.owner === 'pm').reduce((a, s) => a + s.pts, 0);
+    const now = new Date(); const day = Math.min(14, Math.max(1, Math.floor((now - SPRINT.start) / 864e5) + 1)); const left = 14 - day;
+    const lan = sp.map((s, i) => { const x = 30 + i * (940 / Math.max(1, sp.length - 1)); const y = 14 + Math.sin(i / (sp.length - 1 || 1) * Math.PI) * 18;
+      return `<g class="lan ${s.col === 'done' ? 'lit' : ''}" transform="translate(${x.toFixed(0)} ${y.toFixed(0)})"><title>#${s.n} ${esc(s.t)}</title><g class="swing" style="animation-delay:-${i * .4}s">
+        <line y2="12" stroke="currentColor" stroke-opacity=".5"/><circle class="lglow" cy="34" r="30" fill="url(#lg2)"/><rect x="-7" y="12" width="14" height="4" fill="#0E0E12"/>
+        <ellipse class="body" cy="34" rx="15" ry="18" stroke="#9E2A18" stroke-width="1"/><ellipse cy="34" rx="7" ry="18" fill="none" stroke="#9E2A18" stroke-opacity=".6"/>
+        <rect x="-7" y="51" width="14" height="4" fill="#0E0E12"/><text y="70" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="currentColor" opacity=".7">#${s.n}</text></g></g>`; }).join('');
+    $('#sprintHero').innerHTML = `
+      <span class="label">Sprint ${SPRINT.n} · 9 – 22 Nov 2026 · Day ${day} of 14</span>
+      <h2 style="margin-top:4px;max-width:40ch">${esc(SPRINT.goal)}</h2>
+      <div class="kpis">
+        <div><span class="label">Points done</span><span class="num">${done} / ${committed}</span></div>
+        <div><span class="label">Stories done</span><span class="num">${sp.filter(s => s.col === 'done').length} / ${sp.length}</span></div>
+        <div><span class="label">Your points (PM)</span><span class="num">${pmPts}</span></div>
+        <div><span class="label">Days left</span><span class="num">${left}</span></div>
+        <div><span class="label">Sprint review</span><span class="num">Sun 22 Nov 17:00</span></div>
+      </div>
+      <svg class="lanterns" viewBox="0 0 1000 96" preserveAspectRatio="none" aria-label="One lantern per sprint story; lit when done" style="color:var(--paper)">
+        <defs><radialGradient id="lg2"><stop offset="0" stop-color="#FFB45A" stop-opacity=".8"/><stop offset="1" stop-color="#FFB45A" stop-opacity="0"/></radialGradient></defs>
+        <path d="M0 10 Q 500 50 1000 10" stroke="currentColor" stroke-opacity=".4" fill="none"/>${lan}</svg>
+      <p class="note" style="color:inherit;opacity:.7">One lantern per story in this sprint. A lantern lights up when its story is done.</p>`;
+
+    const cap = 2.75 * 2 * 60 / 25;
+    $('#how').innerHTML = [
+      ['var(--ai)', 'Two-week sprints', 'Monday to Sunday. Five sprints take us to mid-January. Each sprint has one goal, shown above.'],
+      ['var(--shu)', 'Who does what', 'You are the Product Owner: you write and order stories and accept work. I’m the developer on the planner. On the game you’re also a developer, and those stories are marked PM.'],
+      ['var(--kaki)', '1 point ≈ 1 pomodoro', `Your build time is Wed 75 min + Sat 90 min, about ${Math.floor(cap)} pomodoros a sprint. I’ve committed ${pmPts} of your points so you have room for course deadlines.`],
+      ['var(--yanagi)', 'Ceremonies in your week', 'Stand-up: the first 2 minutes of every session. Planning, review and retro: the Sunday 17:00 slot on the last day of the sprint. Mid-sprint Sunday: a backlog check.'],
+      ['var(--gold)', 'Definition of Done', 'The code is merged to main with “Closes #n”, the issue is closed, it shows in the app, and you’ve accepted it. Anything less stays In review.'],
+      ['var(--ink-soft)', 'Lean loop', 'Each sprint ships something you can use. We measure it (did you study more? did playtesters replay?) and let that set the next backlog order.']
+    ].map(([c, h, p]) => `<div style="--c:${c}"><b>${h}</b><p>${p}</p></div>`).join('');
+
+    $('#board').innerHTML = COLS.map(([k, label]) => {
+      const cs = ss.filter(s => s.col === k); const pts = cs.reduce((a, s) => a + s.pts, 0);
+      return `<div class="col"><h3><span>${label}</span><span>${cs.length} · ${pts} pt</span></h3>${cs.map(s => `
+        <div class="story a-${s.area}">
+          <div class="top-row"><span>#${s.n} · ${s.area}</span><span>${s.pts} pt</span></div>
+          <p>${esc(s.t)}</p>
+          ${s.ac.length ? `<details><summary>Acceptance criteria</summary><ul>${s.ac.map(a => `<li>${esc(a)}</li>`).join('')}</ul></details>` : ''}
+          <div class="row"><span class="owner ${s.owner}">${s.owner === 'pm' ? 'PM · you' : 'Dev · Claude'}</span>
+            <span style="display:flex;gap:4px">${k !== 'backlog' ? `<button class="move" data-n="${s.n}" data-d="-1" aria-label="Move #${s.n} back">←</button>` : ''}${k !== 'done' ? `<button class="move" data-n="${s.n}" data-d="1" aria-label="Move #${s.n} forward">→</button>` : ''}<button class="move" data-gh="${s.n}" title="Copy gh issue command">gh</button></span></div>
+        </div>`).join('') || '<p class="note">Empty</p>'}</div>`;
+    }).join('');
+    $$('[data-d]').forEach(b => b.onclick = () => {
+      const keys = COLS.map(c => c[0]);
+      const next = stories().map(s => { if (s.n !== +b.dataset.n) return s; const col = keys[Math.max(0, Math.min(4, keys.indexOf(s.col) + +b.dataset.d))]; return { ...s, col, doneAt: col === 'done' ? iso(new Date()) : undefined }; });
+      store.set('stories-v2', next); const moved = next.find(s => s.n === +b.dataset.n);
+      if (moved.col === 'done') toast(`#${moved.n} done. A lantern lights up.`);
+      renderSprint();
+    });
+    $$('[data-gh]').forEach(b => b.onclick = () => copy(issueCmd(stories().find(s => s.n === +b.dataset.gh)), `Copied the gh command for #${b.dataset.gh}`));
+    $('#cmds').textContent = setupCmds();
+    const r = repo();
+    $('#ghStatus').innerHTML = r ? `<span class="dot" style="--c:var(--kaki)"></span> Linked to <b>${esc(r)}</b> · live sync after Sprint 3 deploy` : `<span class="dot" style="--c:var(--ink-soft)"></span> No repo yet (story #9)`;
+    renderBurn(sp, committed);
+    $('#roadmap').innerHTML = SPRINTS.map((s, i) => `<li class="${i === 0 ? 'now' : ''}"><span class="num">${s[0]} · ${s[1]}${i === 0 ? ' · now' : ''}</span><b>${esc(s[2])}</b></li>`).join('');
+  }
+  const q = s => `"${String(s).replace(/"/g, '\\"')}"`;
+  const R = () => repo() ? ` -R ${repo()}` : '';
+  const issueCmd = s => `gh issue create${R()} --title ${q(s.t)} --label area:${s.area},owner:${s.owner},pts:${s.pts}${s.col !== 'backlog' ? ' --milestone "Sprint 1"' : ''} --body ${q((s.ac.length ? s.ac.map(a => '- [ ] ' + a).join('\n') : 'Acceptance criteria: TBD at planning'))}`;
+  function setupCmds() {
+    const labels = [['area:planner', '27467A'], ['area:game', 'CF3B26'], ['area:portfolio', 'E2702A'], ['owner:pm', 'E7A3A0'], ['owner:dev', '5F7F25'], ...[1, 2, 3, 5].map(p => ['pts:' + p, 'D9A441'])];
+    return `# Run once inside your repo folder (needs the GitHub CLI: gh auth login)\n` +
+      labels.map(([l, c]) => `gh label create ${l} --color ${c}${R()} --force`).join('\n') + '\n' +
+      SPRINTS.map((s, i) => `gh api repos/${repo() || '{owner}/{repo}'}/milestones -f title="Sprint ${i + 1}" -f due_on="${['2026-11-22', '2026-12-06', '2026-12-20', '2027-01-03', '2027-01-17'][i]}T23:59:59Z"`).join('\n') + '\n' +
+      [...stories()].sort((a, b) => a.n - b.n).map(issueCmd).join('\n');
+  }
+  async function copy(text, msg) {
+    try { await navigator.clipboard.writeText(text); toast(msg); }
+    catch { $('#cmds').closest('details').open = true; $('#cmds').textContent = text; const r = document.createRange(); r.selectNodeContents($('#cmds')); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); toast('Copy blocked here. The text is selected below.'); }
+  }
+  $('#copyAll').onclick = () => copy(setupCmds(), 'Copied the setup commands for labels, milestones and all 16 issues');
+  $('#repoName').value = repo();
+  $('#repoName').oninput = e => { store.set('repo', e.target.value); renderSprint(); };
+
+  function renderBurn(sp, committed) {
+    const W = 600, H = 240, L = 40, Rm = 16, T = 16, B = 34, days = 14;
+    const x = i => L + i * (W - L - Rm) / (days - 1), y = v => T + (1 - v / Math.max(committed, 1)) * (H - T - B);
+    const today = new Date(); const pts = [];
+    for (let i = 0; i < days; i++) { const d = new Date(SPRINT.start); d.setDate(d.getDate() + i); if (iso(d) > iso(today)) break;
+      const rem = committed - sp.filter(s => s.col === 'done' && s.doneAt && s.doneAt <= iso(d)).reduce((a, s) => a + s.pts, 0); pts.push({ i, d, rem }); }
+    const ideal = i => committed * (1 - i / (days - 1));
+    const ticks = [0, Math.round(committed / 2), committed];
+    $('#burnWrap').innerHTML = `<svg class="burn" viewBox="0 0 ${W} ${H}" role="img" aria-label="Burndown: ${pts.at(-1)?.rem ?? committed} of ${committed} points left">
+      ${ticks.map(t => `<line x1="${L}" x2="${W - Rm}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${L - 8}" y="${y(t) + 4}" text-anchor="end">${t}</text>`).join('')}
+      ${[0, 4, 7, 10, 13].map(i => { const d = new Date(SPRINT.start); d.setDate(d.getDate() + i); return `<text x="${x(i)}" y="${H - 12}" text-anchor="middle">${d.getDate()} Nov</text>`; }).join('')}
+      <line x1="${x(0)}" y1="${y(committed)}" x2="${x(days - 1)}" y2="${y(0)}" stroke="var(--ink-soft)" stroke-width="2" stroke-dasharray="5 5"/>
+      <polyline points="${pts.map(p => x(p.i) + ',' + y(p.rem)).join(' ')}" fill="none" stroke="var(--shu)" stroke-width="2" stroke-linejoin="round"/>
+      ${pts.map((p, k) => `<circle cx="${x(p.i)}" cy="${y(p.rem)}" r="${k === pts.length - 1 ? 5 : 4}" fill="var(--shu)" stroke="var(--card)" stroke-width="2"/>`).join('')}
+      ${pts.length ? `<text x="${x(pts.at(-1).i) + 10}" y="${y(pts.at(-1).rem) - 8}" style="fill:var(--ink)">${pts.at(-1).rem} left</text>` : ''}
+      ${Array.from({ length: days }, (_, i) => `<rect data-i="${i}" x="${x(i) - 20}" y="${T}" width="40" height="${H - T - B}" fill="transparent"/>`).join('')}
+    </svg><div class="tip" id="burnTip" hidden></div>`;
+    $$('#burnWrap rect[data-i]').forEach(r => {
+      r.onmouseenter = () => { const i = +r.dataset.i, p = pts.find(p => p.i === i), d = new Date(SPRINT.start); d.setDate(d.getDate() + i);
+        const tip = $('#burnTip'); tip.hidden = false; tip.textContent = `${d.getDate()} Nov · ${p ? p.rem + ' pts left' : 'not yet'} · ideal ${ideal(i).toFixed(1)}`;
+        const box = $('#burnWrap svg').getBoundingClientRect(); tip.style.left = Math.min(box.width - 190, Math.max(0, (x(i) / W) * box.width - 80)) + 'px'; tip.style.top = '0px'; };
+      r.onmouseleave = () => $('#burnTip').hidden = true;
+    });
+  }
+
+  function renderCanvas() {
+    const fields = [['problem', 'Problem', 'What boredom or gap does the game fill?'], ['players', 'Players', 'Who plays it? When and where?'], ['loop', 'Core loop', 'What does the player do every 30 seconds?'], ['mvp', 'MVP', 'The smallest version people would replay.'], ['metric', 'Key metric', 'e.g. day-7 retention, sessions per week'], ['edge', 'Unfair advantage', 'Art style? Story? Community?']];
+    const cv = store.get('canvas', {});
+    $('#canvas').innerHTML = fields.map(([k, l, ph]) => `<label for="cv-${k}"><span class="label">${l}</span><textarea id="cv-${k}" data-cv="${k}" placeholder="${esc(ph)}">${esc(cv[k] || '')}</textarea></label>`).join('');
+    $$('[data-cv]').forEach(t => t.oninput = () => { const all = store.get('canvas', {}); all[t.dataset.cv] = t.value; store.set('canvas', all); });
+  }
+
+  /* ================= PORTFOLIO ================= */
+  function renderPortfolio() {
+    $('#video').innerHTML = art('neon').replace('viewBox="0 0 260 170"', 'viewBox="0 0 260 146"') + `<div class="play" aria-hidden="true"></div><div class="cap"><span>Your game · gameplay reel</span><span class="chip">0:00 / 1:30</span></div>`;
+    $('#workGrid').innerHTML = [['ibm', 'Consulting case study', 'From the IBM capstone: problem, approach, recommendation.'], ['willow', 'AI product brief', 'A PRD for an AI feature in your game, using the Google AI course.'], ['koi', 'This planner', 'Built in public with scrum. The sprint history is the evidence.']]
+      .map(([a, h, p]) => `<div class="work"><div class="art">${art(a)}</div><div class="wb"><b>${h}</b><p class="note">${p}</p></div></div>`).join('');
+  }
+
+  /* ================= ROUTING ================= */
+  const VIEWS = ['today', 'plan', 'learn', 'build', 'portfolio'];
+  function route() {
+    const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'today';
+    VIEWS.forEach(n => $('#view-' + n).hidden = n !== v);
+    $$('nav.tabs a').forEach(a => a.dataset.view === v ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+  }
+  window.addEventListener('hashchange', () => { route(); window.scrollTo(0, 0); });
+
+  buildWorld(); buildRiver(); tick(); setInterval(tick, 1000);
+  renderToday(); setInterval(renderToday, 30000);
+  drawPomo(); renderCarousel(); renderStats(); renderWeek(); renderCourses(); renderLog(); renderSprint(); renderCanvas(); renderPortfolio(); route();
+})();
+</script>
+
+</body>
+</html>
