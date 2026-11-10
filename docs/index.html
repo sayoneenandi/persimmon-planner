@@ -428,7 +428,7 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
     <article class="panel">
       <header><h3>Learning log</h3><span class="label">One idea per session</span></header>
       <form class="log-form" id="logForm">
-        <select id="logTrack" aria-label="Track"><option value="ibm">IBM Management Consultant</option><option value="gai">Google AI</option><option value="game">Game product</option><option value="read">Reading</option></select>
+        <select id="logTrack" aria-label="Track"><option value="ibm">IBM Management Consultant</option><option value="gai">Google UX Design</option><option value="game">Game product</option><option value="read">Reading</option></select>
         <button class="btn primary" type="submit">Add entry</button>
         <textarea id="logText" placeholder="One idea you could explain to a client or a teammate tomorrow…" aria-label="Log entry"></textarea>
       </form>
@@ -680,12 +680,12 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
   }
 
   /* ================= DATA ================= */
-  const TRACKS = { ibm: { name: 'IBM Management Consultant', short: 'Consulting' }, gai: { name: 'Google AI', short: 'Google AI' }, game: { name: 'Game product', short: 'Game' }, read: { name: 'Reading', short: 'Reading' }, review: { name: 'Sprint ceremonies', short: 'Scrum' } };
+  const TRACKS = { ibm: { name: 'IBM Management Consultant', short: 'Consulting' }, gai: { name: 'Google UX Design', short: 'UX Design' }, game: { name: 'Game product', short: 'Game' }, read: { name: 'Reading', short: 'Reading' }, review: { name: 'Sprint ceremonies', short: 'Scrum' } };
   const COURSES = [
     { id: 'ibm', title: 'IBM Management Consultant Professional Certificate', provider: 'IBM · Coursera', art: 'ibm',
       modules: ['Introduction to Management Consulting', 'Introduction to Business Analysis', 'Course 3 (confirm title)', 'Course 4 (confirm title)', 'Course 5 (confirm title)', 'Course 6 (confirm title)', 'Course 7 (confirm title)', 'Capstone: Integrated Management Consulting Project'] },
-    { id: 'gai', title: 'Google AI Professional Certificate', provider: 'Google · Coursera', art: 'gai',
-      modules: ['Course 1 (confirm title)', 'Course 2 (confirm title)', 'Course 3 (confirm title)', 'Course 4 (confirm title)', 'Course 5 (confirm title)', 'Course 6 (confirm title)', 'Course 7 (confirm title)', 'Capstone project'] }
+    { id: 'gai', title: 'Google UX Design Professional Certificate', provider: 'Google · Coursera', art: 'gai',
+      modules: ['Foundations of User Experience (UX) Design', 'Start the UX Design Process: Empathize, Define, and Ideate', 'Build Wireframes and Low-Fidelity Prototypes', 'Conduct UX Research and Test Early Concepts', 'Create High-Fidelity Designs and Prototypes in Figma', 'Course 6 (confirm title)', 'Course 7 (confirm title)'] }
   ];
   const BOOKS = [
     { id: 'b1', title: 'The Pyramid Principle', by: 'Barbara Minto', why: 'Structure every slide and email', art: 'pyramid', track: 'ibm' },
@@ -698,12 +698,12 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
   const BOOK_STATES = ['To read', 'Reading', 'Finished'];
   const PLAN = [
     { day: 1, start: '19:00', end: '20:30', track: 'ibm', title: 'Consulting: new material', agenda: [['2 min', 'Stand-up: last time / this time / blockers.'], ['25 min', 'Pomodoro 1: next lesson, notes in two columns (idea | client example).'], ['25 min', 'Pomodoro 2: finish the lesson and the practice quiz.'], ['15 min', 'Write 3 bullets you’d say to a client. Add them to the learning log.']] },
-    { day: 2, start: '19:00', end: '20:30', track: 'gai', title: 'Google AI: new material', agenda: [['2 min', 'Stand-up, then set the goal: finish one module.'], ['25 min', 'Pomodoro 1: lessons. Try every prompt yourself.'], ['25 min', 'Pomodoro 2: hands-on activity.'], ['15 min', 'Product angle: one way this could improve your game.']] },
+    { day: 2, start: '19:00', end: '20:30', track: 'gai', title: 'UX Design: new material', agenda: [['2 min', 'Stand-up, then set the goal: finish one module.'], ['25 min', 'Pomodoro 1: lessons. Sketch along on paper.'], ['25 min', 'Pomodoro 2: the hands-on activity.'], ['15 min', 'Apply it to one room or screen of your game.']] },
     { day: 3, start: '19:00', end: '20:15', track: 'game', title: 'Game: one story from the board', agenda: [['2 min', 'Stand-up. Move ONE story to In progress.'], ['50 min', 'Two pomodoros on that story only.'], ['10 min', 'Commit with “#issue” in the message and push. Update the card.']] },
     { day: 3, start: '21:30', end: '21:50', track: 'read', title: 'Reading before bed', agenda: [['20 min', 'Read the current book. Mark one quote worth keeping.']] },
     { day: 4, start: '19:00', end: '20:30', track: 'ibm', title: 'Consulting: practise it', agenda: [['2 min', 'Stand-up.'], ['10 min', 'Pick a framework from Monday (issue tree, stakeholder map…).'], ['50 min', 'Apply it to your game as if it were a client. One page.'], ['15 min', 'Finish any graded assignment due this week.']] },
     { day: 5, start: '', end: '', track: 'rest', title: 'Rest day', agenda: [] },
-    { day: 6, start: '10:00', end: '11:30', track: 'gai', title: 'Deep work: Google AI', agenda: [['75 min', 'Three pomodoros: finish the week’s module and any assignment.'], ['15 min', 'Write a short AI feature idea (PRD stub) for the game.']] },
+    { day: 6, start: '10:00', end: '11:30', track: 'gai', title: 'Deep work: UX Design', agenda: [['75 min', 'Three pomodoros: finish the week’s module and any portfolio project step.'], ['15 min', 'Add one finding to the game’s UX case study.']] },
     { day: 6, start: '14:00', end: '15:30', track: 'game', title: 'Deep work: game build', agenda: [['75 min', 'Three pomodoros on the biggest open story.'], ['15 min', 'Record a 20-second progress clip for the trailer.']] },
     { day: 0, start: '10:30', end: '11:30', track: 'read', title: 'Reading + notes', agenda: [['45 min', 'Read and take notes.'], ['15 min', 'Turn one idea into a learning-log entry.']] },
     { day: 0, start: '17:00', end: '17:45', track: 'review', title: 'Sprint ceremony', agenda: [['Mid-sprint', 'Backlog check: re-order the backlog and confirm next week’s stories.'], ['Last Sunday', 'Review: demo what’s Done and accept or reject each story.'], ['Last Sunday', 'Retro: one thing to keep, one to change.'], ['Last Sunday', 'Planning: pick the next sprint’s stories up to capacity.']] }
@@ -842,7 +842,7 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
 
   function renderStats() {
     const bs = store.get('books', {}), fin = BOOKS.filter(b => bs[b.id] === 2).length, reading = BOOKS.filter(b => bs[b.id] === 1).length;
-    const tiles = [...COURSES.map(c => ({ k: c.provider.split(' ·')[0] + ' certificate', v: pct(c) + '%', s: `${doneCount(c)} of ${c.modules.length} courses complete`, c: c.id, st: c.id === 'ibm' ? 'IBM' : 'G·AI' })),
+    const tiles = [...COURSES.map(c => ({ k: c.provider.split(' ·')[0] + ' certificate', v: pct(c) + '%', s: `${doneCount(c)} of ${c.modules.length} courses complete`, c: c.id, st: c.id === 'ibm' ? 'IBM' : 'UX' })),
       { k: 'Reading list', v: `${fin} / ${BOOKS.length}`, s: `${reading} in progress`, c: 'read', st: '読' }];
     $('#todayStats').innerHTML = tiles.map(t => `<article class="panel stat t-${t.c}"><span class="stamp">${t.st}</span><span class="label"><span class="dot"></span> ${esc(t.k)}</span><div class="num big">${t.v}</div><p class="note">${esc(t.s)}</p></article>`).join('');
   }
@@ -912,10 +912,10 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
   const SPRINT = { n: 1, start: new Date(2026, 10, 9), end: new Date(2026, 10, 22), goal: 'A planner you enjoy opening every day, and a clear one-page concept for your game.' };
   const SPRINTS = [
     ['Sprint 1', '9–22 Nov', 'Woodblock layout, timer, courses, sprint tracker. Game concept.'],
-    ['Sprint 2', '23 Nov–6 Dec', 'Edit your plan and books in the app. Unity set-up, game PRD and paper prototype.'],
-    ['Sprint 3', '7–20 Dec', 'GitHub repo + Pages hosting. Board reads Issues live.'],
+    ['Sprint 2', '23 Nov–6 Dec', 'Edit your plan in the app. Unity greybox of the house; game PRD.'],
+    ['Sprint 3', '7–20 Dec', 'Camera + photo-frame loop in the garden. Board reads Issues live.'],
     ['Sprint 4', '21 Dec–3 Jan', 'Holiday sprint, lighter load. Upload trailer, résumé, case studies.'],
-    ['Sprint 5', '4–17 Jan', 'First playable Unity Web build, playable on your site.']
+    ['Sprint 5', '4–17 Jan', 'Playable slice (house + garden photo loop) on your site; 5 playtests.']
   ];
   const COLS = [['backlog', 'Backlog'], ['todo', 'Sprint · To do'], ['doing', 'In progress'], ['review', 'In review'], ['done', 'Done']];
   const DEFAULT_STORIES = [
@@ -925,8 +925,8 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
     { n: 4, t: 'Course progress tracker', area: 'planner', owner: 'dev', pts: 3, col: 'done', doneAt: '2026-11-10', ac: ['Tick courses for IBM and Google', 'Progress shows on Today'] },
     { n: 5, t: 'Sprint tracker shaped like GitHub Issues', area: 'planner', owner: 'dev', pts: 3, col: 'review', ac: ['Issue numbers, labels, milestones', 'Copyable gh commands', 'Burndown chart'] },
     { n: 6, t: 'Review the v2 redesign and accept or send back #1 and #5', area: 'planner', owner: 'pm', pts: 1, col: 'doing', ac: ['Written feedback in chat'] },
-    { n: 7, t: 'Confirm course titles and which Google course you’re on', area: 'planner', owner: 'pm', pts: 1, col: 'todo', ac: ['All “confirm” titles replaced'] },
-    { n: 8, t: 'Write the game pitch + core loop in the lean canvas', area: 'game', owner: 'pm', pts: 2, col: 'todo', ac: ['One-line pitch', 'Core loop in 3 steps', 'Target player'] },
+    { n: 7, t: 'Confirm the IBM and UX Design course titles on Coursera', area: 'planner', owner: 'pm', pts: 1, col: 'todo', ac: ['All “confirm” titles replaced'] },
+    { n: 8, t: 'Write the game pitch + core loop in the lean canvas (draft is pre-filled)', area: 'game', owner: 'pm', pts: 2, col: 'todo', ac: ['One-line pitch', 'Core loop in 3 steps', 'Target player'] },
     { n: 9, t: 'Create a GitHub account/repo and share the name', area: 'planner', owner: 'pm', pts: 1, col: 'done', doneAt: '2026-11-10', ac: ['Repo exists', 'Name pasted into GitHub link'] },
     { n: 10, t: 'Install Unity and set up the Web build target', area: 'game', owner: 'pm', pts: 2, col: 'todo', ac: ['Unity Hub + Unity 6 LTS with Web Build Support module', 'An empty scene builds for Web without errors'] },
     { n: 11, t: 'Edit sessions and books inside the app', area: 'planner', owner: 'dev', pts: 5, col: 'backlog', ac: [] },
@@ -936,9 +936,13 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
     { n: 15, t: 'Upload résumé PDF', area: 'portfolio', owner: 'dev', pts: 2, col: 'backlog', ac: [] },
     { n: 16, t: 'Capture first trailer clip', area: 'game', owner: 'pm', pts: 3, col: 'backlog', ac: [] },
     { n: 17, t: 'Game page: play the Unity Web build inside the site', area: 'game', owner: 'dev', pts: 5, col: 'backlog', ac: ['Build lives in docs/game/', 'Plays from the Portfolio tab', 'Loads on phone and desktop'] },
-    { n: 18, t: 'Game PRD for the PM course: problem, players, MVP, success metrics', area: 'game', owner: 'pm', pts: 3, col: 'backlog', ac: ['One page', 'Uses the lean canvas', 'Links to the Google AI course'] }
+    { n: 18, t: 'Game PRD + UX case study: problem, players, MVP, success metrics', area: 'game', owner: 'pm', pts: 3, col: 'backlog', ac: ['One page PRD', 'Uses the lean canvas', 'Doubles as a UX Design portfolio project'] },
+    { n: 19, t: 'Unity greybox: front door → living room → stairs → bedroom (Levels A–B)', area: 'game', owner: 'pm', pts: 5, col: 'backlog', ac: ['Walk through all 3 rooms', 'Sitting at the desk triggers the computer'] },
+    { n: 20, t: 'Camera loop: photograph pond life, hang photos on the living-room wall', area: 'game', owner: 'pm', pts: 5, col: 'backlog', ac: ['Take a photo in the garden', 'It appears as a frame in the house'] },
+    { n: 21, t: '5 playtests of the slice; log what players do first', area: 'game', owner: 'pm', pts: 3, col: 'backlog', ac: ['5 testers', 'Findings in the learning log'] },
+    { n: 22, t: 'Computer hub with one portal world (Level C)', area: 'game', owner: 'pm', pts: 5, col: 'backlog', ac: ['Desk computer opens the floating gallery', 'One portal works'] }
   ];
-  const stories = () => store.get('stories-v3', DEFAULT_STORIES);
+  const stories = () => store.get('stories-v4', DEFAULT_STORIES);
   const inSprint = s => s.col !== 'backlog';
   const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const repo = () => (store.get('repo', '') || 'sayoneenandi/persimmon-planner').trim();
@@ -992,7 +996,7 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
     $$('[data-d]').forEach(b => b.onclick = () => {
       const keys = COLS.map(c => c[0]);
       const next = stories().map(s => { if (s.n !== +b.dataset.n) return s; const col = keys[Math.max(0, Math.min(4, keys.indexOf(s.col) + +b.dataset.d))]; return { ...s, col, doneAt: col === 'done' ? iso(new Date()) : undefined }; });
-      store.set('stories-v3', next); const moved = next.find(s => s.n === +b.dataset.n);
+      store.set('stories-v4', next); const moved = next.find(s => s.n === +b.dataset.n);
       if (moved.col === 'done') toast(`#${moved.n} done. A lantern lights up.`);
       renderSprint();
     });
@@ -1047,7 +1051,7 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
   }
 
   function renderCanvas() {
-    const fields = [['problem', 'Problem', 'What boredom or gap does the game fill?'], ['players', 'Players', 'Who plays it? When and where?'], ['loop', 'Core loop', 'What does the player do every 30 seconds?'], ['mvp', 'MVP', 'The smallest version people would replay.'], ['metric', 'Key metric', 'e.g. day-7 retention, sessions per week'], ['edge', 'Unfair advantage', 'Art style? Story? Community?']];
+    const fields = [['problem', 'Problem', 'Draft: what do players want from a calm game after a long day? Write yours.'], ['players', 'Players', 'Draft: cozy-game players who like decorating and photography. Who exactly?'], ['loop', 'Core loop', 'Draft from your level map: explore house and garden → photograph plants and pond life → hang photos to decorate your rooms → unlock new worlds through the computer.'], ['mvp', 'MVP', 'Draft: front door, living room, bedroom and the pond, with the camera and photo frames. No floating worlds yet.'], ['metric', 'Key metric', 'e.g. photos taken per session, % of testers who decorate a room'], ['edge', 'Unfair advantage', 'Draft: the computer’s floating worlds, and the remote that controls your real home.']];
     const cv = store.get('canvas', {});
     $('#canvas').innerHTML = fields.map(([k, l, ph]) => `<label for="cv-${k}"><span class="label">${l}</span><textarea id="cv-${k}" data-cv="${k}" placeholder="${esc(ph)}">${esc(cv[k] || '')}</textarea></label>`).join('');
     $$('[data-cv]').forEach(t => t.oninput = () => { const all = store.get('canvas', {}); all[t.dataset.cv] = t.value; store.set('canvas', all); });
@@ -1056,7 +1060,7 @@ select, textarea, input[type="text"] { font: inherit; color: var(--ink); backgro
   /* ================= PORTFOLIO ================= */
   function renderPortfolio() {
     $('#video').innerHTML = art('neon').replace('viewBox="0 0 260 170"', 'viewBox="0 0 260 146"') + `<div class="play" aria-hidden="true"></div><div class="cap"><span>Your game · gameplay reel</span><span class="chip">0:00 / 1:30</span></div>`;
-    $('#workGrid').innerHTML = [['ibm', 'Consulting case study', 'From the IBM capstone: problem, approach, recommendation.'], ['willow', 'AI product brief', 'A PRD for an AI feature in your game, using the Google AI course.'], ['koi', 'This planner', 'Built in public with scrum. The sprint history is the evidence.']]
+    $('#workGrid').innerHTML = [['ibm', 'Consulting case study', 'From the IBM capstone: problem, approach, recommendation.'], ['willow', 'Level design: Room–Computer–Garden', 'Your level map: house, computer worlds, garden and the remote world.'], ['koi', 'This planner', 'Built in public with scrum. The sprint history is the evidence.']]
       .map(([a, h, p]) => `<div class="work"><div class="art">${art(a)}</div><div class="wb"><b>${h}</b><p class="note">${p}</p></div></div>`).join('');
   }
 
